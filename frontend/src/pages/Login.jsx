@@ -18,7 +18,11 @@ export default function Login() {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post("https://salary-management-64wa.onrender.com/api/auth/login", { email, password });
+      const API_URL = window.location.hostname === "localhost" 
+        ? "http://localhost:5000/api" 
+        : "https://salary-management-64wa.onrender.com/api";
+        
+      const res = await axios.post(`${API_URL}/auth/login`, { email, password });
       sessionStorage.setItem("token", res.data.token);
       sessionStorage.setItem("user", JSON.stringify(res.data.user));
       

@@ -7,41 +7,59 @@ const jwt = require("jsonwebtoken");
 const SECRET = "mysecretkey";
 
 // LOGIN API
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  // 1. First check in Admin 'users' table
-  db.query("SELECT * FROM users WHERE email = ?", [email], async (err, result) => {
-    if (err) return res.status(500).json({ message: "Database error" });
-
-    if (result.length > 0) {
-      const user = result[0];
-      const isMatch = await checkPassword(password, user.password);
-      if (isMatch) return sendToken(res, user, 'admin');
-    }
-
-    // 2. Not an admin, check in 'employees' table
-    db.query("SELECT * FROM employees WHERE email = ?", [email], async (err, empResult) => {
-      if (err) return res.status(500).json({ message: "Database error" });
-
-      if (empResult.length === 0) {
-        return res.status(401).json({ message: "Invalid email or password" });
+  try {
+    // 1. First check in Admin 'users' table
+    db.query("SELECT * FROM users WHERE email = ?", [email], async (err, result) => {
+      if (err) {
+        console.error("Admin query error:", err);
+        return res.status(500).json({ message: "Database error during admin lookup" });
       }
 
-      const emp = empResult[0];
-      
-      // For employees, we might have plain passwords initially if they haven't set one
-      // If password is NULL in DB, maybe we should allow them to set it up or use a default
-      if (!emp.password) {
-        return res.status(401).json({ message: "Account not set up. Please contact admin." });
+      if (result.length > 0) {
+        try {
+          const user = result[0];
+          const isMatch = await checkPassword(password, user.password);
+          if (isMatch) return sendToken(res, user, 'admin');
+        } catch (pwErr) {
+          console.error("Password check error (Admin):", pwErr);
+          return res.status(500).json({ message: "Error verifying credentials" });
+        }
       }
 
-      const isMatch = await checkPassword(password, emp.password);
-      if (!isMatch) return res.status(401).json({ message: "Invalid email or password" });
+      // 2. Not an admin, check in 'employees' table
+      db.query("SELECT * FROM employees WHERE email = ?", [email], async (err, empResult) => {
+        if (err) {
+          console.error("Employee query error:", err);
+          return res.status(500).json({ message: "Database error during employee lookup" });
+        }
 
-      return sendToken(res, emp, 'employee');
+        if (empResult.length === 0) {
+          return res.status(401).json({ message: "Invalid email or password" });
+        }
+
+        try {
+          const emp = empResult[0];
+          if (!emp.password) {
+            return res.status(401).json({ message: "Account not set up. Please contact admin." });
+          }
+
+          const isMatch = await checkPassword(password, emp.password);
+          if (!isMatch) return res.status(401).json({ message: "Invalid email or password" });
+
+          return sendToken(res, emp, 'employee');
+        } catch (pwErr) {
+          console.error("Password check error (Employee):", pwErr);
+          return res.status(500).json({ message: "Error verifying credentials" });
+        }
+      });
     });
-  });
+  } catch (globalErr) {
+    console.error("Global login error:", globalErr);
+    res.status(500).json({ message: "Server error during authentication" });
+  }
 });
 
 async function checkPassword(input, stored) {
