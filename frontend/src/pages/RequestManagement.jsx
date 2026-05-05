@@ -6,7 +6,7 @@ import {
   User, Calendar, 
   MessageSquare, FileText, ChevronRight, AlertCircle,
   Briefcase, CheckCircle, Info, ArrowRight,
-  ChevronDown, RefreshCw, Plus
+  ChevronDown, RefreshCw, Plus, Send
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
