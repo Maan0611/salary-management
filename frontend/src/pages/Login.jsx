@@ -20,7 +20,7 @@ export default function Login() {
     try {
       const API_URL = window.location.hostname === "localhost" 
         ? "http://localhost:5000/api" 
-        : "https://salary-management-64wa.onrender.com/api";
+        : `${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api`;
         
       const res = await axios.post(`${API_URL}/auth/login`, { email, password });
       sessionStorage.setItem("token", res.data.token);

@@ -35,7 +35,7 @@ export default function AdminDashboard() {
     const fetchStats = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get("https://salary-management-64wa.onrender.com/api/admin/dashboard", {
+        const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/admin/dashboard`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setStats(res.data);

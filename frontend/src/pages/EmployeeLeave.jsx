@@ -20,7 +20,7 @@ export default function EmployeeLeave() {
   const fetchLeaves = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const res = await axios.get("https://salary-management-64wa.onrender.com/api/employee-portal/leaves", {
+      const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/leaves`, {
         headers: { Authorization: `Bearer ${token}` } 
       });
       setLeaves(res.data);
@@ -39,7 +39,7 @@ export default function EmployeeLeave() {
     e.preventDefault();
     try {
       const token = sessionStorage.getItem("token");
-      await axios.post("https://salary-management-64wa.onrender.com/api/employee-portal/leaves", formData, {
+      await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/leaves`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setShowModal(false);

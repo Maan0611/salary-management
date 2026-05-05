@@ -14,7 +14,7 @@ export default function EmployeeAttendance() {
     const fetchAttendance = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get("https://salary-management-64wa.onrender.com/api/employee-portal/attendance", {
+        const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/attendance`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setAttendance(res.data);

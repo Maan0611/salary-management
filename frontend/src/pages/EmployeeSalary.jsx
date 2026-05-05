@@ -16,7 +16,7 @@ export default function EmployeeSalary() {
     const fetchSalaries = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get("https://salary-management-64wa.onrender.com/api/employee-portal/salary", {
+        const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/salary`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setSalaries(res.data);

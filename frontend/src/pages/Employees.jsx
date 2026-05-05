@@ -21,7 +21,7 @@ export default function Employees() {
     try {
       setLoading(true);
       const token = sessionStorage.getItem("token");
-      const res = await axios.get("https://salary-management-64wa.onrender.com/api/employees", {
+      const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employees`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEmployees(res.data);
@@ -40,7 +40,7 @@ export default function Employees() {
     if (!window.confirm("Permanently remove this employee from the records?")) return;
     try {
       const token = sessionStorage.getItem("token");
-      await axios.delete(`https://salary-management-64wa.onrender.com/api/employees/${id}`, {
+      await axios.delete(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employees/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       loadEmployees();

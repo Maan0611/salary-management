@@ -32,8 +32,8 @@ export default function Announcements() {
       const token = sessionStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
       const [annRes, deptRes] = await Promise.all([
-        axios.get("https://salary-management-64wa.onrender.com/api/announcements/admin/all", { headers }),
-        axios.get("https://salary-management-64wa.onrender.com/api/dashboard/departments", { headers })
+        axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/announcements/admin/all`, { headers }),
+        axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/dashboard/departments`, { headers })
       ]);
       setAnnouncements(annRes.data);
       setDepartments(deptRes.data);
@@ -73,8 +73,8 @@ export default function Announcements() {
     try {
       const token = sessionStorage.getItem("token");
       const url = editingId 
-        ? `https://salary-management-64wa.onrender.com/api/announcements/${editingId}`
-        : "https://salary-management-64wa.onrender.com/api/announcements/create";
+        ? `${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/announcements/${editingId}`
+        : `${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/announcements/create`;
       
       const method = editingId ? "put" : "post";
       
@@ -117,7 +117,7 @@ export default function Announcements() {
     if (!window.confirm("Are you sure you want to delete this announcement?")) return;
     try {
       const token = sessionStorage.getItem("token");
-      await axios.delete(`https://salary-management-64wa.onrender.com/api/announcements/${id}`, {
+      await axios.delete(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/announcements/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchData();

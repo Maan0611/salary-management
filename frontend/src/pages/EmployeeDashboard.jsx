@@ -32,13 +32,13 @@ export default function EmployeeDashboard() {
     const fetchStats = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get("https://salary-management-64wa.onrender.com/api/employee-portal/dashboard", {
+        const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/dashboard`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setStats(res.data);
         setLoading(false);
 
-        const attRes = await axios.get("https://salary-management-64wa.onrender.com/api/employee-portal/attendance", {
+        const attRes = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/attendance`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const today = new Date().toLocaleDateString('en-CA');
@@ -58,7 +58,7 @@ export default function EmployeeDashboard() {
   const handleCheckIn = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      await axios.post("https://salary-management-64wa.onrender.com/api/attendance/check-in", {}, {
+      await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/attendance/check-in`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setCheckedIn(true);
