@@ -4,8 +4,13 @@ const path = require("path");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(express.json());
+
+// Health Check
+app.get("/", (req, res) => {
+  res.send("Backend API is running");
+});
 
 const employeeRoutes = require("./routes/employeeRoutes");
 const authRoutes = require("./routes/auth");
@@ -57,6 +62,7 @@ initDB();
 const initSalaryCron = require("./utils/salaryCron");
 initSalaryCron();
 
-app.listen(5000, () => {
-  console.log("Server running on 5000");
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
 });
