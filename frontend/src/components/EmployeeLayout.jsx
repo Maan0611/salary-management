@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { 
-  UserCheck, UserMinus, DollarSign, Calendar, Clock, 
-  FileText, ArrowRight, Briefcase, Bell, Layout as LayoutIcon,
-  CheckCircle2, User, Search, LogOut, Menu, X
+  Calendar, FileText, Briefcase, Bell, Layout as LayoutIcon,
+  User, LogOut, Menu, X
 } from "lucide-react";
 import EmployeeSidebar from "./EmployeeSidebar";
 import { useNavigate } from "react-router-dom";
