@@ -13,7 +13,7 @@ export default function AdminProfile() {
   const loadProfile = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/admin/profile", {
+      const res = await axios.get("https://salary-management-64wa.onrender.com/api/admin/profile", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProfile(res.data);
@@ -32,7 +32,7 @@ export default function AdminProfile() {
     e.preventDefault();
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put("http://localhost:5000/api/admin/profile", editData, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.put("https://salary-management-64wa.onrender.com/api/admin/profile", editData, { headers: { Authorization: `Bearer ${token}` } });
       setMessage({ type: "success", text: "Profile updated successfully!" });
       loadProfile();
     } catch (err) {
@@ -47,7 +47,7 @@ export default function AdminProfile() {
     }
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put("http://localhost:5000/api/admin/change-password", passData, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.put("https://salary-management-64wa.onrender.com/api/admin/change-password", passData, { headers: { Authorization: `Bearer ${token}` } });
       setMessage({ type: "success", text: "Password changed successfully!" });
       setPassData({ currentPassword: "", newPassword: "", confirmPassword: "" });
     } catch (err) {
@@ -62,7 +62,7 @@ export default function AdminProfile() {
     formData.append("profileImage", file);
     try {
       const token = sessionStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/admin/upload-photo", formData, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } });
+      await axios.post("https://salary-management-64wa.onrender.com/api/admin/upload-photo", formData, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } });
       setMessage({ type: "success", text: "Photo uploaded successfully!" });
       loadProfile();
     } catch (err) {
@@ -86,7 +86,7 @@ export default function AdminProfile() {
           <div className="md:w-1/3 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center">
             <div className="w-32 h-32 rounded-full bg-gray-200 overflow-hidden mb-4 border-4 border-white shadow-lg">
               {profile.profile_image ? (
-                <img src={`http://localhost:5000${profile.profile_image}`} alt="Profile" className="w-full h-full object-cover" />
+                <img src={`https://salary-management-64wa.onrender.com${profile.profile_image}`} alt="Profile" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-4xl">
                   {profile.name ? profile.name.charAt(0).toUpperCase() : "A"}

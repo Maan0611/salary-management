@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { 
-  Calendar as CalendarIcon, Clock, UserCheck, 
+  Calendar as CalendarIcon, Clock, 
   UserMinus, Filter, ChevronLeft, ChevronRight,
-  TrendingUp, Activity
+  Activity
 } from "lucide-react";
-import { motion } from "framer-motion";
 
 export default function EmployeeAttendance() {
   const [attendance, setAttendance] = useState([]);
@@ -15,7 +14,7 @@ export default function EmployeeAttendance() {
     const fetchAttendance = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/employee-portal/attendance", {
+        const res = await axios.get("https://salary-management-64wa.onrender.com/api/employee-portal/attendance", {
           headers: { Authorization: `Bearer ${token}` }
         });
         setAttendance(res.data);

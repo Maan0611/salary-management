@@ -21,7 +21,7 @@ export default function EmployeeSettings() {
     setLoading(true);
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put("http://localhost:5000/api/employee-portal/change-password", {
+      await axios.put("https://salary-management-64wa.onrender.com/api/employee-portal/change-password", {
         oldPassword: passData.oldPassword,
         newPassword: passData.newPassword
       }, {

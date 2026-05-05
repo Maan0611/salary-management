@@ -22,7 +22,7 @@ export default function EmployeeSidebar({ isOpen, toggleSidebar }) {
     const fetchUnread = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/announcements/employee/all", {
+        const res = await axios.get("https://salary-management-64wa.onrender.com/api/announcements/employee/all", {
           headers: { Authorization: `Bearer ${token}` }
         });
         const unread = res.data.filter(ann => !ann.is_read).length;

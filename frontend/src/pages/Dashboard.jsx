@@ -10,12 +10,12 @@ import {
   Users, UserCheck, UserMinus, Building2, IndianRupee, Clock,
   Search, Filter, Download, FileSpreadsheet, Bell, Sun, Moon,
   ChevronRight, ArrowUpRight, Activity, MoreVertical, Calendar,
-  Briefcase, CheckCircle2, AlertCircle, ExternalLink, ClipboardList,
-  Check, X as CloseIcon, RefreshCw, Sparkles, Zap, ShieldCheck
+  Briefcase, CheckCircle2, AlertCircle, ClipboardList,
+  Check, X as CloseIcon, RefreshCw, Zap, ShieldCheck
 } from "lucide-react";
 import { ArrowRight } from "lucide-react";
 import CountUp from 'react-countup';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import LiveClock from "../components/LiveClock";
 
 const StatCard = ({ title, value, icon: Icon, color, trend }) => {
@@ -71,7 +71,6 @@ export default function Dashboard() {
     ]
   });
 
-  const [employees, setEmployees] = useState([]);
   const [recentRequests, setRecentRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -82,9 +81,9 @@ export default function Dashboard() {
         const headers = { Authorization: `Bearer ${token}` };
 
         const [statsRes, empRes, reqRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/dashboard/stats", { headers }),
-          axios.get("http://localhost:5000/api/employees", { headers }),
-          axios.get("http://localhost:5000/api/requests/admin/all", { headers })
+          axios.get("https://salary-management-64wa.onrender.com/api/dashboard/stats", { headers }),
+          axios.get("https://salary-management-64wa.onrender.com/api/employees", { headers }),
+          axios.get("https://salary-management-64wa.onrender.com/api/requests/admin/all", { headers })
         ]);
 
         const allReqs = reqRes.data || [];
@@ -101,7 +100,6 @@ export default function Dashboard() {
             { name: 'Rejected', value: rejectedReqs.length, color: '#ef4444' }
           ]
         });
-        setEmployees(empRes.data);
         setRecentRequests(pendingReqs.slice(0, 5));
         setLoading(false);
       } catch (err) {
@@ -120,13 +118,13 @@ export default function Dashboard() {
   const handleRequestAction = async (id, action) => {
     try {
       const token = sessionStorage.getItem("token");
-      const url = `http://localhost:5000/api/requests/admin/${id}/${action.toLowerCase()}`;
+      const url = `https://salary-management-64wa.onrender.com/api/requests/admin/${id}/${action.toLowerCase()}`;
       await axios.put(url, { admin_remark: "Approved via dashboard" }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Refresh data
-      const statsRes = await axios.get("http://localhost:5000/api/dashboard/stats", { headers: { Authorization: `Bearer ${token}` } });
-      const reqRes = await axios.get("http://localhost:5000/api/requests/admin/all", { headers: { Authorization: `Bearer ${token}` } });
+      const statsRes = await axios.get("https://salary-management-64wa.onrender.com/api/dashboard/stats", { headers: { Authorization: `Bearer ${token}` } });
+      const reqRes = await axios.get("https://salary-management-64wa.onrender.com/api/requests/admin/all", { headers: { Authorization: `Bearer ${token}` } });
       
       const allReqs = reqRes.data || [];
       const pendingReqs = allReqs.filter(r => r.status === 'Pending');

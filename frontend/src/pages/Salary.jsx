@@ -44,7 +44,7 @@ export default function Salary() {
     try {
       setLoading(true);
       const token = sessionStorage.getItem("token");
-      const res = await axios.get(`http://localhost:5000/api/salary?month=${selectedMonth}&year=${selectedYear}`, {
+      const res = await axios.get(`https://salary-management-64wa.onrender.com/api/salary?month=${selectedMonth}&year=${selectedYear}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSalaryRecords(res.data);
@@ -63,7 +63,7 @@ export default function Salary() {
     try {
       setGenerating(true);
       const token = sessionStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/salary/generate", { 
+      await axios.post("https://salary-management-64wa.onrender.com/api/salary/generate", { 
         month: selectedMonth, 
         year: selectedYear 
       }, {
@@ -84,7 +84,7 @@ export default function Salary() {
     if (!window.confirm("Authorize payment for this record?")) return;
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put(`http://localhost:5000/api/salary/pay/${id}`, {}, {
+      await axios.put(`https://salary-management-64wa.onrender.com/api/salary/pay/${id}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage({ type: "success", text: "Transaction completed successfully" });
@@ -99,7 +99,7 @@ export default function Salary() {
     e.preventDefault();
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put(`http://localhost:5000/api/salary/update/${editRecord.id}`, editRecord, {
+      await axios.put(`https://salary-management-64wa.onrender.com/api/salary/update/${editRecord.id}`, editRecord, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setShowEditModal(false);
@@ -115,7 +115,7 @@ export default function Salary() {
     if (!window.confirm("Permanently delete this payroll record?")) return;
     try {
       const token = sessionStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/salary/${id}`, {
+      await axios.delete(`https://salary-management-64wa.onrender.com/api/salary/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage({ type: "success", text: "Record removed" });
@@ -129,7 +129,7 @@ export default function Salary() {
   const handleApprove = async (id) => {
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put(`http://localhost:5000/api/salary/approve/${id}`, {}, {
+      await axios.put(`https://salary-management-64wa.onrender.com/api/salary/approve/${id}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage({ type: "success", text: "Salary approved" });
@@ -144,7 +144,7 @@ export default function Salary() {
     if (!remarks) return alert("Please provide rejection remarks");
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put(`http://localhost:5000/api/salary/reject/${rejectId}`, { remarks }, {
+      await axios.put(`https://salary-management-64wa.onrender.com/api/salary/reject/${rejectId}`, { remarks }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setShowRejectModal(false);
@@ -161,7 +161,7 @@ export default function Salary() {
     if (!window.confirm(`Approve ${selectedIds.length} salary records?`)) return;
     try {
       const token = sessionStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/salary/bulk-approve", { ids: selectedIds }, {
+      await axios.post("https://salary-management-64wa.onrender.com/api/salary/bulk-approve", { ids: selectedIds }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage({ type: "success", text: `${selectedIds.length} salaries approved` });

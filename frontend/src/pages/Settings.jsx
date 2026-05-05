@@ -19,7 +19,7 @@ export default function Settings() {
     const fetchHealth = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/dashboard/system-health", {
+        const res = await axios.get("https://salary-management-64wa.onrender.com/api/dashboard/system-health", {
           headers: { Authorization: `Bearer ${token}` }
         });
         setHealth(res.data);
@@ -41,7 +41,7 @@ export default function Settings() {
     setLoading(true);
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put("http://localhost:5000/api/auth/change-password", {
+      await axios.put("https://salary-management-64wa.onrender.com/api/auth/change-password", {
         oldPassword: passData.oldPassword,
         newPassword: passData.newPassword
       }, {

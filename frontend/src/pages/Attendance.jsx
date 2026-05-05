@@ -55,7 +55,7 @@ export default function Attendance() {
       setLoading(true);
       const token = sessionStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
-      const res = await axios.get(`http://localhost:5000/api/attendance?date=${selectedDate}`, { headers });
+      const res = await axios.get(`https://salary-management-64wa.onrender.com/api/attendance?date=${selectedDate}`, { headers });
       const data = res.data.map(emp => ({
         ...emp,
         status: emp.status || "Absent",
@@ -93,7 +93,7 @@ export default function Attendance() {
         check_out: emp.check_out,
         notes: emp.notes
       }));
-      await axios.post("http://localhost:5000/api/attendance/save", { attendanceData, date: selectedDate }, { headers });
+      await axios.post("https://salary-management-64wa.onrender.com/api/attendance/save", { attendanceData, date: selectedDate }, { headers });
       setMessage({ type: 'success', text: "Attendance records synchronized successfully!" });
       setTimeout(() => setMessage(null), 3000);
     } catch (err) {

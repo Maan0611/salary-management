@@ -46,7 +46,7 @@ export default function AddEmployee() {
 
     try {
       const token = sessionStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/employees", formData, {
+      await axios.post("https://salary-management-64wa.onrender.com/api/employees", formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSuccess("Employee successfully integrated into the workforce!");

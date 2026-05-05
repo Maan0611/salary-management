@@ -20,7 +20,7 @@ export default function EmployeeLayout({ children }) {
     const fetchProfile = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/employee-portal/profile", {
+        const res = await axios.get("https://salary-management-64wa.onrender.com/api/employee-portal/profile", {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProfile(res.data);
@@ -85,7 +85,7 @@ export default function EmployeeLayout({ children }) {
               </div>
               <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center text-indigo-600 shadow-inner overflow-hidden border border-white">
                 {profile?.profile_photo ? (
-                  <img src={`http://localhost:5000${profile.profile_photo}`} alt="P" className="w-full h-full object-cover" />
+                  <img src={`https://salary-management-64wa.onrender.com${profile.profile_photo}`} alt="P" className="w-full h-full object-cover" />
                 ) : (
                   <User size={20} />
                 )}

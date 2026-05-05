@@ -29,7 +29,7 @@ export default function RequestManagement() {
         setLoading(false);
         return;
       }
-      const res = await axios.get("http://localhost:5000/api/requests/admin/all", {
+      const res = await axios.get("https://salary-management-64wa.onrender.com/api/requests/admin/all", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(res.data);
@@ -58,7 +58,7 @@ export default function RequestManagement() {
   const handleAction = async (id, action) => {
     try {
       const token = sessionStorage.getItem("token");
-      const url = `http://localhost:5000/api/requests/admin/${id}/${action}`;
+      const url = `https://salary-management-64wa.onrender.com/api/requests/admin/${id}/${action}`;
       await axios.put(url, { admin_remark: adminRemark }, {
         headers: { Authorization: `Bearer ${token}` }
       });

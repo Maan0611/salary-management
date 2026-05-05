@@ -3,9 +3,9 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import { 
-  Users, Search, Plus, Filter, MoreVertical, Edit, Trash2, 
+  Users, Search, Filter, Edit, Trash2, 
   Download, Building2, UserPlus, Briefcase, IndianRupee,
-  ChevronRight, Calendar, Mail, User, Shield, Info,
+  ChevronRight, Calendar, Mail, Shield, Info,
   RefreshCw, FileSpreadsheet, ChevronDown
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,7 +21,7 @@ export default function Employees() {
     try {
       setLoading(true);
       const token = sessionStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/employees", {
+      const res = await axios.get("https://salary-management-64wa.onrender.com/api/employees", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEmployees(res.data);
@@ -40,7 +40,7 @@ export default function Employees() {
     if (!window.confirm("Permanently remove this employee from the records?")) return;
     try {
       const token = sessionStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/employees/${id}`, {
+      await axios.delete(`https://salary-management-64wa.onrender.com/api/employees/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       loadEmployees();

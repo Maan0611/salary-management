@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { 
   Megaphone, Search, Calendar, 
-  Download, CheckCircle2, AlertTriangle, 
+  Download, AlertTriangle, 
   Info, Paperclip, X, Clock, ExternalLink 
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,7 +16,7 @@ export default function EmployeeAnnouncements() {
   const fetchAnnouncements = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/announcements/employee/all", {
+      const res = await axios.get("https://salary-management-64wa.onrender.com/api/announcements/employee/all", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAnnouncements(res.data);
@@ -39,7 +39,7 @@ export default function EmployeeAnnouncements() {
   const markAsRead = async (id) => {
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put(`http://localhost:5000/api/announcements/employee/${id}/read`, {}, {
+      await axios.put(`https://salary-management-64wa.onrender.com/api/announcements/employee/${id}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAnnouncements(prev => prev.map(a => a.id === id ? { ...a, is_read: 1 } : a));
@@ -190,7 +190,7 @@ export default function EmployeeAnnouncements() {
                       </div>
                     </div>
                     <a 
-                      href={`http://localhost:5000${selectedAnn.attachment}`}
+                      href={`https://salary-management-64wa.onrender.com${selectedAnn.attachment}`}
                       target="_blank"
                       rel="noreferrer"
                       className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition flex items-center gap-2"

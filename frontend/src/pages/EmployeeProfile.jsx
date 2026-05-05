@@ -23,7 +23,7 @@ export default function EmployeeProfile() {
   const fetchProfile = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/employee-portal/profile", {
+      const res = await axios.get("https://salary-management-64wa.onrender.com/api/employee-portal/profile", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProfile(res.data);
@@ -34,7 +34,7 @@ export default function EmployeeProfile() {
         emergency_contact: res.data.emergency_contact || ""
       });
       if (res.data.profile_photo) {
-        setPreviewUrl(`http://localhost:5000${res.data.profile_photo}`);
+        setPreviewUrl(`https://salary-management-64wa.onrender.com${res.data.profile_photo}`);
       }
     } catch (err) {
       console.error(err);
@@ -59,7 +59,7 @@ export default function EmployeeProfile() {
     formDataPhoto.append("photo", selectedFile);
     try {
       const token = sessionStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/employee-portal/profile/upload-photo", formDataPhoto, {
+      await axios.post("https://salary-management-64wa.onrender.com/api/employee-portal/profile/upload-photo", formDataPhoto, {
         headers: { 
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data"
@@ -76,7 +76,7 @@ export default function EmployeeProfile() {
     e.preventDefault();
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put("http://localhost:5000/api/employee-portal/profile", formData, {
+      await axios.put("https://salary-management-64wa.onrender.com/api/employee-portal/profile", formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setIsEditing(false);
@@ -91,7 +91,7 @@ export default function EmployeeProfile() {
     e.preventDefault();
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put("http://localhost:5000/api/employee-portal/change-password", passData, {
+      await axios.put("https://salary-management-64wa.onrender.com/api/employee-portal/change-password", passData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setPassData({ oldPassword: "", newPassword: "" });

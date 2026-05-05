@@ -10,7 +10,7 @@ export default function EmployeeNotifications() {
   const fetchNotifications = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/employee-portal/notifications", {
+      const res = await axios.get("https://salary-management-64wa.onrender.com/api/employee-portal/notifications", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setNotifications(res.data);
@@ -28,7 +28,7 @@ export default function EmployeeNotifications() {
   const markAsRead = async (id) => {
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put(`http://localhost:5000/api/employee-portal/notifications/${id}/read`, {}, {
+      await axios.put(`https://salary-management-64wa.onrender.com/api/employee-portal/notifications/${id}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchNotifications();

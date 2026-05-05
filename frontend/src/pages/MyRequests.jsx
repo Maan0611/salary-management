@@ -22,7 +22,7 @@ export default function MyRequests() {
   const fetchRequests = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/requests/my", {
+      const res = await axios.get("https://salary-management-64wa.onrender.com/api/requests/my", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(res.data);
@@ -41,7 +41,7 @@ export default function MyRequests() {
     e.preventDefault();
     try {
       const token = sessionStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/requests/create", formData, {
+      await axios.post("https://salary-management-64wa.onrender.com/api/requests/create", formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setShowModal(false);

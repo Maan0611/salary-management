@@ -3,9 +3,9 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import Layout from "../components/Layout";
 import { 
-  User, Mail, Building2, Briefcase, Calendar, 
-  IndianRupee, ShieldCheck, Lock, PlaneTakeoff,
-  Save, X, Info, CheckCircle2, AlertCircle
+  User, Briefcase, 
+  ShieldCheck, Lock, PlaneTakeoff,
+  Save, X, CheckCircle2, AlertCircle
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -33,7 +33,7 @@ export default function EditEmployee() {
     const fetchEmployee = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get(`http://localhost:5000/api/employees/${id}`, {
+        const res = await axios.get(`https://salary-management-64wa.onrender.com/api/employees/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = res.data;
@@ -62,7 +62,7 @@ export default function EditEmployee() {
     setIsSubmitting(true);
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put(`http://localhost:5000/api/employees/${id}`, formData, {
+      await axios.put(`https://salary-management-64wa.onrender.com/api/employees/${id}`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSuccess("Employee record successfully synchronized!");
