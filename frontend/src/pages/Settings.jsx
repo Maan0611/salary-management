@@ -3,7 +3,7 @@ import axios from "axios";
 import Layout from "../components/Layout";
 import { 
   Shield, Key, Lock, Eye, EyeOff,
-  Save, Palette, Database, Activity,
+  Save, Database,
   CheckCircle2, AlertTriangle, AlertCircle
 } from "lucide-react";
 import { motion } from "framer-motion";

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { 
-  Plus, Calendar, Clock, CheckCircle2, 
-  XCircle, Send, FileText, ChevronRight,
-  MessageCircle, IndianRupee, Briefcase, User
+  Plus, Calendar, CheckCircle2, 
+  Send, FileText
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 

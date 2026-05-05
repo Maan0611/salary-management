@@ -7,22 +7,17 @@ import {
   UserMinus,
   Clock,
   Search,
-  Filter,
   Save,
   CheckCircle2,
   Calendar,
   ArrowRight,
-  Timer,
   Download,
-  FileText,
   Table as TableIcon,
   RefreshCw,
   Search as SearchIcon,
-  MapPin,
   Briefcase,
   ChevronDown,
   AlertCircle,
-  Plus,
   CheckCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

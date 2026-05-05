@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { 
-  Megaphone, Plus, Search, Filter, 
-  MoreVertical, Edit2, Trash2, Calendar, 
+  Megaphone, Plus, Search, 
+  Edit2, Trash2, Calendar, 
   Users, Paperclip, Send, X, AlertTriangle, CheckCircle2 
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

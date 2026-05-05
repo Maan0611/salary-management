@@ -3,9 +3,9 @@ import axios from "axios";
 import Layout from "../components/Layout";
 import { 
   CheckCircle2, XCircle, Clock, Search, 
-  Filter, MoreVertical, Send, User, Calendar, 
+  User, Calendar, 
   MessageSquare, FileText, ChevronRight, AlertCircle,
-  Briefcase, Trash2, CheckCircle, Info, ArrowRight,
+  Briefcase, CheckCircle, Info, ArrowRight,
   ChevronDown, RefreshCw, Plus
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
