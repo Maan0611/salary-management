@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
 import { 
-  IndianRupee, Download, Filter, Search, FileText, 
+  IndianRupee, Download, Search, FileText, 
   CreditCard, Clock, CheckCircle, AlertCircle, Edit, 
-  Trash2, Eye, Calendar, Building2, User, MoreVertical,
+  Trash2, Calendar, MoreVertical,
   Plus, RefreshCw, FileSpreadsheet, ChevronDown,
   TrendingUp, Wallet, Receipt, CheckCircle2, XCircle, Info
 } from "lucide-react";
@@ -40,7 +40,7 @@ export default function Salary() {
 
   const years = Array.from({ length: 5 }, (_, i) => (new Date().getFullYear() - 2 + i).toString());
 
-  const fetchSalaries = async () => {
+  const fetchSalaries = useCallback(async () => {
     try {
       setLoading(true);
       const token = sessionStorage.getItem("token");
@@ -53,11 +53,11 @@ export default function Salary() {
       console.error("Fetch failed", err);
       setLoading(false);
     }
-  };
+  }, [selectedMonth, selectedYear]);
 
   useEffect(() => {
     fetchSalaries();
-  }, [selectedMonth, selectedYear]);
+  }, [fetchSalaries]);
 
   const handleGenerate = async () => {
     try {
