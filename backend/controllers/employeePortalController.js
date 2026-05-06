@@ -132,7 +132,13 @@ exports.changePassword = async (req, res) => {
     db.query("SELECT password FROM employees WHERE id = ?", [employeeId], async (err, result) => {
         if (err || result.length === 0) return res.status(500).json({ message: "Auth error" });
 
-        const isMatch = await bcrypt.compare(oldPassword, result[0].password);
+        const storedPassword = result[0].password;
+        let isMatch = false;
+        if (storedPassword && (storedPassword.startsWith("$2a$") || storedPassword.startsWith("$2b$"))) {
+            isMatch = await bcrypt.compare(oldPassword, storedPassword);
+        } else {
+            isMatch = oldPassword === storedPassword;
+        }
         if (!isMatch) return res.status(401).json({ message: "Incorrect old password" });
 
         const hashed = await bcrypt.hash(newPassword, 10);
