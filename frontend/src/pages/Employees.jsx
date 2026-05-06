@@ -16,6 +16,8 @@ export default function Employees() {
   const [filterDept, setFilterDept] = useState("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const loadEmployees = async () => {
     try {
@@ -63,6 +65,16 @@ export default function Employees() {
       return matchesSearch && matchesDept;
     });
   }, [employees, searchTerm, filterDept]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterDept]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filtered.slice(startIndex, startIndex + itemsPerPage);
+  }, [filtered, currentPage]);
 
   const stats = useMemo(() => {
     const total = employees.length;
@@ -201,7 +213,7 @@ export default function Employees() {
               </thead>
               <tbody className="divide-y divide-slate-100/50">
                 <AnimatePresence>
-                  {filtered.map((emp, i) => (
+                  {paginatedData.map((emp, i) => (
                     <motion.tr 
                       key={emp.id}
                       initial={{ opacity: 0 }}
@@ -295,13 +307,31 @@ export default function Employees() {
               Discovered <span className="text-indigo-600 font-black">{filtered.length}</span> active professional profiles
             </p>
             <div className="flex items-center gap-4">
-              <button className="px-6 py-3 bg-white border border-slate-200 rounded-2xl text-xs font-black uppercase text-slate-500 hover:bg-slate-100 transition-all active:scale-95">Previous Cycle</button>
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-6 py-3 bg-white border border-slate-200 rounded-2xl text-xs font-black uppercase text-slate-500 hover:bg-slate-100 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+              >
+                Previous Cycle
+              </button>
               <div className="flex items-center gap-2">
-                {[1, 2, 3].map(n => (
-                  <button key={n} className={`w-10 h-10 rounded-xl text-xs font-black ${n === 1 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'bg-white text-slate-400 hover:bg-slate-50 border border-slate-100'}`}>{n}</button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+                  <button 
+                    key={n} 
+                    onClick={() => setCurrentPage(n)}
+                    className={`w-10 h-10 rounded-xl text-xs font-black ${n === currentPage ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'bg-white text-slate-400 hover:bg-slate-50 border border-slate-100'}`}
+                  >
+                    {n}
+                  </button>
                 ))}
               </div>
-              <button className="px-6 py-3 bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 active:scale-95">Next Progression</button>
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-6 py-3 bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+              >
+                Next Progression
+              </button>
             </div>
           </div>
         </div>
