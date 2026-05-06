@@ -76,19 +76,7 @@ export default function Login() {
 
           <div className="relative z-10 flex flex-col gap-8">
             <div className="flex items-center gap-6">
-              <div className="flex -space-x-4">
-                {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="w-12 h-12 rounded-full border-4 border-[#0a0f1d] bg-slate-800 flex items-center justify-center text-[10px] font-black text-white">
-                    U{i}
-                  </div>
-                ))}
               </div>
-              <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">Trusted by 500+ Enterprises</p>
-            </div>
-            
-            <div className="flex items-center gap-4 text-slate-500 text-xs font-black tracking-[0.2em] uppercase border-t border-white/5 pt-8">
-              <Globe size={14} /> Global Compliance Guaranteed
-            </div>
           </div>
           
           {/* Abstract Grid Decor */}
@@ -144,7 +132,6 @@ export default function Login() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center px-1">
                   <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Secure Password</label>
-                  <button type="button" className="text-[10px] font-black text-indigo-400 hover:text-indigo-300 transition-colors uppercase tracking-widest">Recovery?</button>
                 </div>
                 <div className="relative group">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-500 transition-colors" size={18} />
@@ -159,10 +146,7 @@ export default function Login() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 px-1 pt-2">
-                <input type="checkbox" id="remember" className="w-5 h-5 rounded-lg bg-white/5 border-white/10 text-indigo-600 focus:ring-indigo-500/20 transition-all cursor-pointer" />
-                <label htmlFor="remember" className="text-xs font-bold text-slate-500 cursor-pointer">Maintain persistent session</label>
-              </div>
+            
 
               <button 
                 type="submit" 
@@ -178,12 +162,6 @@ export default function Login() {
                 )}
               </button>
             </form>
-
-            <div className="mt-12 text-center">
-              <p className="text-slate-600 text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-                <Command size={12} /> Shift + Enter to fast login
-              </p>
-            </div>
           </motion.div>
         </div>
       </div>
