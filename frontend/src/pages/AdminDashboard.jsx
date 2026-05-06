@@ -85,26 +85,28 @@ export default function AdminDashboard() {
           <Settings className="inline-block mr-3 align-text-bottom" size={36} /> Admin Dashboard
         </motion.h1>
 
-        {/* Stats Grid */}
+        {/* Stats Grid - Single Row */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"
+          className="grid grid-cols-4 gap-4"
           variants={containerVariants}
         >
           {cards.map((card, i) => (
             <motion.div
               key={i}
-              className="glass-card p-6 rounded-2xl flex flex-col items-center text-center"
+              className="glass-card p-4 rounded-2xl flex flex-row items-center gap-4"
               variants={cardVariants}
             >
               <div
-                className={`w-16 h-16 rounded-xl flex items-center justify-center bg-${card.color}-500/10 text-${card.color}-600 mb-4`}
+                className={`w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center bg-${card.color}-500/10 text-${card.color}-600`}
               >
-                <card.icon size={32} strokeWidth={2.5} />
+                <card.icon size={24} strokeWidth={2.5} />
               </div>
-              <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">
-                {card.label}
-              </p>
-              <h3 className="text-2xl font-bold text-slate-800 mt-1">{card.value}</h3>
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wider leading-tight">
+                  {card.label}
+                </p>
+                <h3 className="text-xl font-bold text-slate-800 mt-0.5">{card.value}</h3>
+              </div>
             </motion.div>
           ))}
         </motion.div>
