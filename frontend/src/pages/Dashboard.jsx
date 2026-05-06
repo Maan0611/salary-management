@@ -18,7 +18,7 @@ import CountUp from 'react-countup';
 import { motion } from "framer-motion";
 import LiveClock from "../components/LiveClock";
 
-const StatCard = ({ title, value, icon: Icon, color, trend }) => {
+const StatCard = ({ title, value, icon: Icon, color }) => {
   const getColors = (c) => {
     switch(c) {
       case 'indigo': return { bg: '#EDE9FE', text: '#4F46E5' };
@@ -33,21 +33,19 @@ const StatCard = ({ title, value, icon: Icon, color, trend }) => {
   const theme = getColors(color);
   return (
     <motion.div
-      whileHover={{ y: -5, scale: 1.02 }}
-      className="glass-card p-6 rounded-[2.5rem] flex flex-col gap-4 relative overflow-hidden h-full group bg-white shadow-sm border border-slate-100"
+      whileHover={{ y: -3, scale: 1.02 }}
+      className="glass-card p-4 rounded-2xl flex flex-row items-center gap-3 relative overflow-hidden group bg-white shadow-sm border border-slate-100"
     >
-      <div className="flex justify-between items-start z-10">
-        <div className="p-4 rounded-2xl group-hover:scale-110 transition-transform duration-500 shadow-sm" style={{ backgroundColor: theme.bg, color: theme.text }}>
-          <Icon size={24} />
-        </div>
+      <div className="p-3 rounded-xl flex-shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm" style={{ backgroundColor: theme.bg, color: theme.text }}>
+        <Icon size={20} />
       </div>
-      <div className="z-10">
-        <p className="text-slate-500 text-[10px] font-black tracking-[0.2em] uppercase">{title}</p>
-        <h3 className="text-3xl font-black mt-2 text-slate-900">
-          <CountUp end={value} duration={1.5} separator="," prefix={title.includes("Salary") || title.includes("Expense") ? "₹" : ""} />
+      <div className="z-10 min-w-0">
+        <p className="text-slate-500 text-[9px] font-black tracking-[0.15em] uppercase truncate">{title}</p>
+        <h3 className="text-xl font-black mt-0.5 text-slate-900">
+          <CountUp end={value} duration={1.5} separator="," prefix={title.includes("Salary") || title.includes("Budget") || title.includes("Expense") ? "₹" : ""} />
         </h3>
       </div>
-      <div className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10 rounded-full blur-3xl group-hover:opacity-20 transition-all duration-700" style={{ backgroundColor: theme.text }}></div>
+      <div className="absolute -right-4 -bottom-4 w-20 h-20 opacity-10 rounded-full blur-2xl group-hover:opacity-20 transition-all duration-500" style={{ backgroundColor: theme.text }}></div>
     </motion.div>
   );
 };
@@ -207,8 +205,8 @@ export default function Dashboard() {
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-400/10 rounded-full blur-[100px] -ml-20 -mb-20"></div>
         </div>
 
-        {/* Primary Stats Grid - 6 Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        {/* Primary Stats Grid - 6 Cards in one row */}
+        <div className="grid grid-cols-6 gap-4">
           <StatCard title="Total Staff" value={stats.totalEmployees} icon={Users} color="indigo" />
           <StatCard title="Present Today" value={stats.presentToday} icon={UserCheck} color="emerald" />
           <StatCard title="Absent Today" value={stats.absentToday} icon={UserMinus} color="rose" />
