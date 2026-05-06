@@ -21,7 +21,7 @@ import LiveClock from "../components/LiveClock";
 const StatCard = ({ title, value, icon: Icon, color }) => {
   const getColors = (c) => {
     switch(c) {
-      case 'indigo': return { bg: '#EDE9FE', text: '#4F46E5' };
+      case 'indigo': return { bg: '#d5cdfbff', text: '#4F46E5' };
       case 'emerald': return { bg: '#D1FAE5', text: '#10B981' };
       case 'rose': return { bg: '#FEE2E2', text: '#EF4444' };
       case 'purple': return { bg: '#EDE9FE', text: '#7C3AED' };
@@ -33,19 +33,18 @@ const StatCard = ({ title, value, icon: Icon, color }) => {
   const theme = getColors(color);
   return (
     <motion.div
-      whileHover={{ y: -3, scale: 1.02 }}
-      className="glass-card p-4 rounded-2xl flex flex-row items-center gap-3 relative overflow-hidden group bg-white shadow-sm border border-slate-100"
+      whileHover={{ y: -4, scale: 1.02 }}
+      className="bg-white rounded-2xl p-5 flex flex-col items-start gap-3 relative overflow-hidden group shadow-sm border border-slate-100"
     >
-      <div className="p-3 rounded-xl flex-shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm" style={{ backgroundColor: theme.bg, color: theme.text }}>
-        <Icon size={20} />
+      <div className="p-3 rounded-2xl group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: theme.bg, color: theme.text }}>
+        <Icon size={22} />
       </div>
-      <div className="z-10 min-w-0">
-        <p className="text-slate-500 text-[9px] font-black tracking-[0.15em] uppercase truncate">{title}</p>
-        <h3 className="text-xl font-black mt-0.5 text-slate-900">
+      <div>
+        <p className="text-slate-400 text-[9px] font-black tracking-[0.2em] uppercase">{title}</p>
+        <h3 className="text-2xl font-black mt-1 text-slate-900">
           <CountUp end={value} duration={1.5} separator="," prefix={title.includes("Salary") || title.includes("Budget") || title.includes("Expense") ? "₹" : ""} />
         </h3>
       </div>
-      <div className="absolute -right-4 -bottom-4 w-20 h-20 opacity-10 rounded-full blur-2xl group-hover:opacity-20 transition-all duration-500" style={{ backgroundColor: theme.text }}></div>
     </motion.div>
   );
 };
