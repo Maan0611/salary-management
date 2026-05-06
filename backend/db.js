@@ -15,9 +15,9 @@ const db = mysql.createPool({
 // Use the pool to verify connection
 db.getConnection((err, connection) => {
   if (err) {
-    console.log("DB Connection Failed ❌", err);
+    console.log("DB Connection Failed ❌", err.message);
   } else {
-    console.log("MySQL Connected ✅ (via Pool)");
+    console.log(`MySQL Connected ✅ (Host: ${process.env.DB_HOST}, DB: ${process.env.DB_NAME})`);
     connection.release();
   }
 });

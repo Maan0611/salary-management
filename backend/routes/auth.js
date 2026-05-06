@@ -14,8 +14,11 @@ router.post("/login", async (req, res) => {
     // 1. First check in Admin 'users' table
     db.query("SELECT * FROM users WHERE email = ?", [email], async (err, result) => {
       if (err) {
-        console.error("Admin query error:", err);
-        return res.status(500).json({ message: "Database error during admin lookup" });
+        console.error("ADMIN LOOKUP ERROR:", err);
+        return res.status(500).json({ 
+          message: "Database error during admin lookup",
+          error: process.env.NODE_ENV === 'development' ? err.message : undefined 
+        });
       }
 
       if (result.length > 0) {
