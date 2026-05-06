@@ -28,13 +28,12 @@ exports.getStats = async (req, res) => {
     const [deptCount] = await db.promise().query("SELECT COUNT(DISTINCT department) as count FROM employees");
     stats.totalDepartments = deptCount[0].count;
 
-    // 4. Monthly Salary Expense (Using the new SALARY table)
+    // 4. Monthly Salary Expense / Budget (Sum of basic salary for active employees)
     const currentMonthNum = (new Date().getMonth() + 1).toString().padStart(2, '0'); // "04"
     const currentYear = new Date().getFullYear().toString();
 
     const [salaryExpense] = await db.promise().query(
-      "SELECT SUM(net_salary) as total FROM salary WHERE month = ? AND year = ? AND status = 'Paid'",
-      [currentMonthNum, currentYear]
+      "SELECT SUM(basic_salary) as total FROM employees WHERE status = 'Active'"
     );
     stats.monthlySalaryExpense = salaryExpense[0].total || 0;
 
