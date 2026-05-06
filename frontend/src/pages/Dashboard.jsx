@@ -22,7 +22,7 @@ const StatCard = ({ title, value, icon: Icon, color }) => {
   const getColors = (c) => {
     switch(c) {
       case 'indigo': return { bg: '#d5cdfbff', text: '#4F46E5' };
-      case 'emerald': return { bg: '#D1FAE5', text: '#10B981' };
+      case 'emerald': return { bg: '#c0fadcff', text: '#10B981' };
       case 'rose': return { bg: '#FEE2E2', text: '#EF4444' };
       case 'purple': return { bg: '#EDE9FE', text: '#7C3AED' };
       case 'amber': return { bg: '#FEF3C7', text: '#F59E0B' };
