@@ -1,16 +1,18 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
+console.log("Initializing SMTP Transport (v5) - Forcing IPv4...");
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
-    secure: true, // Use SSL
+    secure: true,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, '') : ''
     },
     tls: {
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
+        family: 4 // Force IPv4 in TLS as well
     },
     connectionTimeout: 20000,
     family: 4 // Force IPv4 to avoid ENETUNREACH on IPv6
