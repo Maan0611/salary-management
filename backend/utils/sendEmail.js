@@ -1,7 +1,8 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const dns = require('dns');
 
-console.log("Initializing SMTP Transport (v5) - Forcing IPv4...");
+console.log("Initializing SMTP Transport (v6) - Forcing IPv4 via DNS...");
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -11,11 +12,15 @@ const transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, '') : ''
     },
     tls: {
-        rejectUnauthorized: false,
-        family: 4 // Force IPv4 in TLS as well
+        rejectUnauthorized: false
     },
     connectionTimeout: 20000,
-    family: 4 // Force IPv4 to avoid ENETUNREACH on IPv6
+    greetingTimeout: 20000,
+    socketTimeout: 20000,
+    dnsLookup: (hostname, options, callback) => {
+        // Force IPv4 lookup
+        dns.lookup(hostname, { family: 4 }, callback);
+    }
 });
 
 // Verify connection configuration
