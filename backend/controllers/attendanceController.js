@@ -98,7 +98,7 @@ const checkIn = async (req, res) => {
     } else {
       // Insert new record
       await db.promise().query(
-        "INSERT INTO attendance (emp_id, date, status, check_in) VALUES (?, ?, 'Present', ?)",
+        "INSERT INTO attendance (emp_id, date, status, check_in, check_out) VALUES (?, ?, 'Present', ?, NULL)",
         [emp_id, date, check_in]
       );
     }
