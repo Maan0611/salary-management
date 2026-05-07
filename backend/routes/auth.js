@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require("../db");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { sendOTPEmail } = require("../utils/sendEmail");
 
 const SECRET = process.env.JWT_SECRET || "mysecretkey";
 
