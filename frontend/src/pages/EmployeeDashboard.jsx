@@ -38,6 +38,9 @@ export default function EmployeeDashboard() {
         });
         setStats(res.data);
         setLoading(false);
+        const attRes = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/attendance`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
         const todayStr = new Date().toISOString().split('T')[0];
         const todayLog = attRes.data.find(log => {
