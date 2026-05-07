@@ -30,11 +30,19 @@ exports.generateSalary = async (req, res) => {
 
     if (!month || !year) return res.status(400).json({ message: "Month and Year are required" });
 
-    // 1. Get all employees
-    db.query("SELECT id, basic_salary FROM employees", (err, employees) => {
-        if (err) return res.status(500).json({ message: "Error fetching employees" });
+    // Calculate the last day of the selected month/year to filter by join_date
+    // month is "01", "02", etc.
+    const lastDay = new Date(year, parseInt(month), 0).toISOString().slice(0, 10);
 
-        if (employees.length === 0) return res.status(404).json({ message: "No employees found" });
+    // 1. Get employees who joined on or before the selected period
+    const sqlEmployees = "SELECT id, basic_salary FROM employees WHERE join_date <= ? AND status = 'Active'";
+    db.query(sqlEmployees, [lastDay], (err, employees) => {
+        if (err) {
+            console.error("Error fetching employees for payroll:", err);
+            return res.status(500).json({ message: "Error fetching eligible employees" });
+        }
+
+        if (employees.length === 0) return res.status(404).json({ message: "No active employees found who joined before or during this period." });
 
         // 2. Check if salaries already generated for this month/year
         db.query("SELECT employee_id FROM salary WHERE month = ? AND year = ?", [month, year], (err, existing) => {
@@ -43,7 +51,7 @@ exports.generateSalary = async (req, res) => {
             const existingIds = existing.map(s => s.employee_id);
             const toGenerate = employees.filter(e => !existingIds.includes(e.id));
 
-            if (toGenerate.length === 0) return res.status(200).json({ message: "Salaries already generated for all employees for this period" });
+            if (toGenerate.length === 0) return res.status(200).json({ message: "Salaries already generated for all eligible employees for this period" });
 
             // 3. Insert records (Default status: Draft)
             const values = toGenerate.map(e => [
@@ -57,7 +65,7 @@ exports.generateSalary = async (req, res) => {
                 // Notify Admins
                 notifyAdmins(`New salaries generated for ${month}/${year}. Review required.`, "Payroll Drafts Ready");
                 
-                res.status(201).json({ message: `Successfully generated ${toGenerate.length} salary records as Draft` });
+                res.status(201).json({ message: `Successfully generated ${toGenerate.length} salary records for employees active as of ${month}/${year}` });
             });
         });
     });
