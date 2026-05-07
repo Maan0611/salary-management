@@ -55,7 +55,16 @@ exports.approveRequest = (req, res) => {
     const sql = "UPDATE requests SET status = 'Approved', admin_remark = ? WHERE id = ?";
     db.query(sql, [admin_remark, id], (err) => {
         if (err) return res.status(500).json({ message: "Update failed" });
-        res.json({ message: "Request approved successfully" });
+        
+        // Trigger Email Notification
+        const { sendLeaveStatusEmail } = require('../utils/sendEmail');
+        db.query("SELECT r.*, e.name, e.email FROM requests r JOIN employees e ON r.employee_id = e.id WHERE r.id = ?", [id], async (err, result) => {
+            if (!err && result.length > 0) {
+                await sendLeaveStatusEmail(result[0], result[0]);
+            }
+        });
+        
+        res.json({ message: "Request approved and email sent" });
     });
 };
 
@@ -65,7 +74,16 @@ exports.rejectRequest = (req, res) => {
     const sql = "UPDATE requests SET status = 'Rejected', admin_remark = ? WHERE id = ?";
     db.query(sql, [admin_remark, id], (err) => {
         if (err) return res.status(500).json({ message: "Update failed" });
-        res.json({ message: "Request rejected successfully" });
+        
+        // Trigger Email Notification
+        const { sendLeaveStatusEmail } = require('../utils/sendEmail');
+        db.query("SELECT r.*, e.name, e.email FROM requests r JOIN employees e ON r.employee_id = e.id WHERE r.id = ?", [id], async (err, result) => {
+            if (!err && result.length > 0) {
+                await sendLeaveStatusEmail(result[0], result[0]);
+            }
+        });
+        
+        res.json({ message: "Request rejected and email sent" });
     });
 };
 

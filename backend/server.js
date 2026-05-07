@@ -22,6 +22,8 @@ const employeePortalRoutes = require("./routes/employeePortalRoutes");
 const requestRoutes = require("./routes/requestRoutes");
 const announcementRoutes = require("./routes/announcementRoutes");
 
+const emailRoutes = require("./routes/emailRoutes");
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/uploads/profiles", express.static(path.join(__dirname, "uploads/profiles")));
 app.use("/uploads/announcements", express.static(path.join(__dirname, "uploads/announcements")));
@@ -35,6 +37,7 @@ app.use("/api/salary", salaryRoutes);
 app.use("/api/employee-portal", employeePortalRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/announcements", announcementRoutes);
+app.use("/api/email", emailRoutes);
 
 const db = require("./db");
 const bcrypt = require("bcryptjs");
@@ -42,6 +45,14 @@ const bcrypt = require("bcryptjs");
 const initDB = async () => {
   try {
     const queries = [
+      // ... existing tables ...
+      `CREATE TABLE IF NOT EXISTS otp_codes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(100) NOT NULL,
+        otp VARCHAR(6) NOT NULL,
+        expires_at DATETIME NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
       // Users Table (Admin)
       `CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,

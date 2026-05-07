@@ -662,6 +662,26 @@ export default function Salary() {
                             <FileText size={18} />
                           </button>
                         )}
+                        {s.status === 'Paid' && (
+                          <button 
+                            onClick={async () => {
+                              try {
+                                const token = sessionStorage.getItem("token");
+                                await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/email/send-salary`, { salaryId: s.id }, {
+                                  headers: { Authorization: `Bearer ${token}` }
+                                });
+                                setMessage({ type: "success", text: "Salary slip sent to " + s.email });
+                                setTimeout(() => setMessage(null), 3000);
+                              } catch (err) {
+                                setMessage({ type: "error", text: "Failed to send email" });
+                              }
+                            }}
+                            className="w-10 h-10 flex items-center justify-center bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl transition-all"
+                            title="Send Email Slip"
+                          >
+                            <Plus size={18} />
+                          </button>
+                        )}
                         <button 
                           onClick={() => {setEditRecord(s); setShowEditModal(true);}}
                           className="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:text-amber-600 hover:bg-white hover:shadow-md rounded-xl transition-all"
