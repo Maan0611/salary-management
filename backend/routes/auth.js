@@ -159,7 +159,10 @@ router.post("/send-otp", async (req, res) => {
                 res.json({ message: "OTP sent successfully to " + userEmail.replace(/(.{2})(.*)(@.*)/, "$1***$3") });
             } else {
                 console.error("OTP Email Error:", emailSent.error);
-                res.status(500).json({ message: "Failed to send email. Check SMTP settings." });
+                res.status(500).json({ 
+                    message: "Failed to send email. " + (emailSent.error?.message || "Check SMTP settings."),
+                    debug: process.env.NODE_ENV === 'development' ? emailSent.error : undefined
+                });
             }
         });
     });
