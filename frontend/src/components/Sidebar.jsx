@@ -150,11 +150,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
             </button>
           </div>
         )}
-        {!isCollapsed && (
-          <div className="mt-6 flex justify-center">
-            <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em]">Version 2.1.0 Premium</p>
-          </div>
-        )}
+       
       </div>
     </motion.div>
   );
