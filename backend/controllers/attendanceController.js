@@ -76,9 +76,9 @@ const checkIn = async (req, res) => {
       return res.status(401).json({ message: "Employee ID missing in token" });
     }
 
-    const date = new Date().toISOString().slice(0, 10);
-    // MySQL TIME type expects HH:MM:SS format
-    const check_in = new Date().toLocaleTimeString('en-GB', { hour12: false });
+    // Use client-provided local date and time to avoid UTC mismatch
+    const date = req.body.date || new Date().toISOString().slice(0, 10);
+    const check_in = req.body.check_in || new Date().toLocaleTimeString('en-GB', { hour12: false });
 
     // Verify if already checked in
     const [existing] = await db.promise().query(
@@ -121,8 +121,8 @@ const checkOut = async (req, res) => {
       return res.status(401).json({ message: "Employee ID missing in token" });
     }
 
-    const date = new Date().toISOString().slice(0, 10);
-    const check_out = new Date().toLocaleTimeString('en-GB', { hour12: false });
+    const date = req.body.date || new Date().toISOString().slice(0, 10);
+    const check_out = req.body.check_out || new Date().toLocaleTimeString('en-GB', { hour12: false });
 
     // Verify if already checked in today
     const [existing] = await db.promise().query(

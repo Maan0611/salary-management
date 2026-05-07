@@ -68,9 +68,13 @@ export default function EmployeeDashboard() {
   const handleCheckIn = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/attendance/check-in`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const localDate = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
+      const localTime = new Date().toLocaleTimeString('en-GB', { hour12: false }); // HH:MM:SS
+
+      await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/attendance/check-in`, 
+        { date: localDate, check_in: localTime }, 
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setCheckedIn(true);
     } catch (err) {
       alert(err.response?.data?.message || "Check-in failed");
@@ -80,9 +84,13 @@ export default function EmployeeDashboard() {
   const handleCheckOut = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/attendance/check-out`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const localDate = new Date().toLocaleDateString('en-CA');
+      const localTime = new Date().toLocaleTimeString('en-GB', { hour12: false });
+
+      await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/attendance/check-out`, 
+        { date: localDate, check_out: localTime }, 
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setCheckedOut(true);
     } catch (err) {
       alert(err.response?.data?.message || "Check-out failed");
