@@ -322,7 +322,7 @@ export default function Salary() {
     doc.setFont("helvetica", "italic");
     doc.text("This is a computer-generated payslip and does not require a physical stamp.", 105, 280, { align: 'center' });
     
-    doc.save(`Payslip_${salary.name}_${monthLabel}.pdf`);
+    doc.save(`Payslip_${salary.name}_${monthLabel}_${selectedYear}.pdf`);
   };
 
   if (loading && salaryRecords.length === 0) {
