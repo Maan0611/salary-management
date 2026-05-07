@@ -76,25 +76,32 @@ const checkIn = async (req, res) => {
       return res.status(401).json({ message: "Employee ID missing in token" });
     }
 
-    const date = new Date().toLocaleDateString('en-CA');
+    const date = new Date().toISOString().slice(0, 10);
     // MySQL TIME type expects HH:MM:SS format
     const check_in = new Date().toLocaleTimeString('en-GB', { hour12: false });
 
     // Verify if already checked in
     const [existing] = await db.promise().query(
-      "SELECT id FROM attendance WHERE emp_id = ? AND date = ?",
+      "SELECT id, status, check_in FROM attendance WHERE emp_id = ? AND date = ?",
       [emp_id, date]
     );
 
     if (existing && existing.length > 0) {
-      return res.status(400).json({ message: "You have already checked in for today." });
+      if (existing[0].check_in) {
+        return res.status(400).json({ message: "You have already checked in for today." });
+      }
+      // If record exists (e.g. marked Absent by admin) but no check_in time, allow check-in
+      await db.promise().query(
+        "UPDATE attendance SET status = 'Present', check_in = ? WHERE id = ?",
+        [check_in, existing[0].id]
+      );
+    } else {
+      // Insert new record
+      await db.promise().query(
+        "INSERT INTO attendance (emp_id, date, status, check_in) VALUES (?, ?, 'Present', ?)",
+        [emp_id, date, check_in]
+      );
     }
-
-    // Insert record
-    await db.promise().query(
-      "INSERT INTO attendance (emp_id, date, status, check_in) VALUES (?, ?, 'Present', ?)",
-      [emp_id, date, check_in]
-    );
 
     console.log(`Success: Employee ${emp_id} checked in at ${check_in} on ${date}`);
     res.json({ message: "Checked in successfully" });
@@ -114,7 +121,7 @@ const checkOut = async (req, res) => {
       return res.status(401).json({ message: "Employee ID missing in token" });
     }
 
-    const date = new Date().toLocaleDateString('en-CA');
+    const date = new Date().toISOString().slice(0, 10);
     const check_out = new Date().toLocaleTimeString('en-GB', { hour12: false });
 
     // Verify if already checked in today

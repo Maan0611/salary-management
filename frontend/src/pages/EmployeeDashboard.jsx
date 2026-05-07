@@ -44,6 +44,8 @@ export default function EmployeeDashboard() {
 
         const todayStr = new Date().toISOString().split('T')[0];
         const todayLog = attRes.data.find(log => {
+          // MySQL DATE columns might be returned as ISO strings or local Date objects
+          // We convert to ISO and take the date part to ensure consistency
           const logDate = new Date(log.date).toISOString().split('T')[0];
           return logDate === todayStr;
         });
