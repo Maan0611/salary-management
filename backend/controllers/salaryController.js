@@ -5,7 +5,7 @@ const { notifyAdmins, sendNotification } = require('../utils/notificationHelper'
 exports.getAllSalary = (req, res) => {
     const { month, year } = req.query;
     let query = `
-        SELECT s.*, e.name, e.emp_id as employee_code, e.department, e.position 
+        SELECT s.*, e.name, e.email, e.emp_id as employee_code, e.department, e.position 
         FROM salary s 
         JOIN employees e ON s.employee_id = e.id
     `;

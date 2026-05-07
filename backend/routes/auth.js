@@ -127,26 +127,34 @@ router.post("/send-otp", async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
 
-    // Check if user exists in either table
-    db.query("SELECT name, email FROM users WHERE email = ? UNION SELECT name, email FROM employees WHERE email = ?", [email, email], async (err, result) => {
-        if (err || result.length === 0) return res.status(404).json({ message: "User with this email not found" });
-
+    // Find user by Email OR Employee ID (for employees)
+    const query = `
+        SELECT name, email FROM users WHERE email = ? 
+        UNION 
+        SELECT name, email FROM employees WHERE email = ? OR emp_id = ?
+    `;
+    
+    db.query(query, [email, email, email], async (err, result) => {
+        if (err || result.length === 0) {
+            return res.status(404).json({ message: "No account found with this Email or Employee ID" });
+        }
+        
         const user = result[0];
+        const userEmail = user.email;
+        const userName = user.name;
+        
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+        const expiresAt = new Date(Date.now() + 5 * 60000); // 5 mins
 
-        // Save OTP to database (create table if not exists)
         db.query("CREATE TABLE IF NOT EXISTS otp_codes (id INT AUTO_INCREMENT PRIMARY KEY, email VARCHAR(100), otp VARCHAR(6), expires_at DATETIME)", (err) => {
             if (err) return res.status(500).json({ message: "System error" });
 
-            db.query("INSERT INTO otp_codes (email, otp, expires_at) VALUES (?, ?, ?)", [email, otp, expiresAt], async (err) => {
-                if (err) return res.status(500).json({ message: "Error generating OTP" });
+            db.query("INSERT INTO otp_codes (email, otp, expires_at) VALUES (?, ?, ?)", [userEmail, otp, expiresAt], async (err) => {
+                if (err) return res.status(500).json({ message: "Database error" });
 
-                const { sendOTPEmail } = require("../utils/sendEmail");
-                const emailSent = await sendOTPEmail(email, user.name, otp);
-
+                const emailSent = await sendOTPEmail(userEmail, userName, otp);
                 if (emailSent.success) {
-                    res.json({ message: "OTP sent to your email" });
+                    res.json({ message: "OTP sent successfully to " + userEmail.replace(/(.{2})(.*)(@.*)/, "$1***$3") });
                 } else {
                     res.status(500).json({ message: "Failed to send email. Check SMTP settings." });
                 }

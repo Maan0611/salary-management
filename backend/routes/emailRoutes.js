@@ -16,15 +16,14 @@ router.post('/send-salary', async (req, res) => {
         `;
         
         db.query(query, [salaryId], async (err, result) => {
-            if (err || result.length === 0) return res.status(404).json({ message: "Salary record not found" });
+            if (err || result.length === 0) {
+                console.error("Salary Email Error: Record not found", err);
+                return res.status(404).json({ message: "Salary record not found" });
+            }
             
             const data = result[0];
-            // Since we don't have the PDF generator on the backend yet (frontend does it), 
-            // and the user asked for "Attach salary slip PDF automatically", 
-            // I should ideally generate it here. 
-            // However, implementing a full PDF generator on backend might be complex now.
-            // For now, I'll send the email with the breakdown.
-            
+            console.log(`Attempting to send salary email to: ${data.email}`);
+
             const emailResult = await sendSalaryEmail(
                 { name: data.name, email: data.email },
                 { 
@@ -37,13 +36,15 @@ router.post('/send-salary', async (req, res) => {
                     tax: data.tax,
                     net_salary: data.net_salary
                 },
-                null // PDF attachment handled separately if needed
+                null 
             );
 
             if (emailResult.success) {
-                res.json({ message: "Salary slip email sent successfully" });
+                console.log("Salary Email Sent Successfully ✅");
+                res.json({ message: "Salary slip email sent successfully to " + data.email });
             } else {
-                res.status(500).json({ message: "Failed to send email" });
+                console.error("Salary Email Failed ❌:", emailResult.error);
+                res.status(500).json({ message: "Failed to send email: " + emailResult.error });
             }
         });
     } catch (error) {
@@ -64,9 +65,14 @@ router.post('/send-leave-status', async (req, res) => {
         `;
         
         db.query(query, [requestId], async (err, result) => {
-            if (err || result.length === 0) return res.status(404).json({ message: "Request not found" });
+            if (err || result.length === 0) {
+                console.error("Leave Email Error: Record not found", err);
+                return res.status(404).json({ message: "Request not found" });
+            }
             
             const data = result[0];
+            console.log(`Attempting to send leave status email to: ${data.email}`);
+
             const emailResult = await sendLeaveStatusEmail(
                 { name: data.name, email: data.email },
                 { 
@@ -79,9 +85,11 @@ router.post('/send-leave-status', async (req, res) => {
             );
 
             if (emailResult.success) {
-                res.json({ message: "Leave status email sent successfully" });
+                console.log("Leave Email Sent Successfully ✅");
+                res.json({ message: "Leave status email sent successfully to " + data.email });
             } else {
-                res.status(500).json({ message: "Failed to send email" });
+                console.error("Leave Email Failed ❌:", emailResult.error);
+                res.status(500).json({ message: "Failed to send email: " + emailResult.error });
             }
         });
     } catch (error) {

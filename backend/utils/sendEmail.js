@@ -20,6 +20,7 @@ transporter.verify(function (error, success) {
 
 const sendEmail = async (options) => {
     try {
+        console.log(`Sending email to: ${options.to}`);
         const mailOptions = {
             from: `"Nexus HR" <${process.env.EMAIL_USER}>`,
             to: options.to,
