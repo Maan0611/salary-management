@@ -107,4 +107,45 @@ const checkIn = async (req, res) => {
   }
 };
 
-module.exports = { getAttendance, saveAttendance, updateAttendance, checkIn };
+const checkOut = async (req, res) => {
+  try {
+    const emp_id = req.user.id;
+    if (!emp_id) {
+      return res.status(401).json({ message: "Employee ID missing in token" });
+    }
+
+    const date = new Date().toLocaleDateString('en-CA');
+    const check_out = new Date().toLocaleTimeString('en-GB', { hour12: false });
+
+    // Verify if already checked in today
+    const [existing] = await db.promise().query(
+      "SELECT id, check_out FROM attendance WHERE emp_id = ? AND date = ?",
+      [emp_id, date]
+    );
+
+    if (!existing || existing.length === 0) {
+      return res.status(400).json({ message: "You haven't checked in for today yet." });
+    }
+
+    if (existing[0].check_out) {
+      return res.status(400).json({ message: "You have already checked out for today." });
+    }
+
+    // Update record with check-out time
+    await db.promise().query(
+      "UPDATE attendance SET check_out = ? WHERE id = ?",
+      [check_out, existing[0].id]
+    );
+
+    console.log(`Success: Employee ${emp_id} checked out at ${check_out} on ${date}`);
+    res.json({ message: "Checked out successfully" });
+  } catch (err) {
+    console.error("Check-out Error:", err);
+    res.status(500).json({ 
+      message: "Database synchronization failed. Please try again or contact IT.",
+      error: err.message 
+    });
+  }
+};
+
+module.exports = { getAttendance, saveAttendance, updateAttendance, checkIn, checkOut };

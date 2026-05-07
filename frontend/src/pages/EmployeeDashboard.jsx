@@ -27,6 +27,7 @@ export default function EmployeeDashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [checkedIn, setCheckedIn] = useState(false);
+  const [checkedOut, setCheckedOut] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -38,15 +39,16 @@ export default function EmployeeDashboard() {
         setStats(res.data);
         setLoading(false);
 
-        const attRes = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/attendance`, {
-          headers: { Authorization: `Bearer ${token}` }
+        const todayStr = new Date().toISOString().split('T')[0];
+        const todayLog = attRes.data.find(log => {
+          const logDate = new Date(log.date).toISOString().split('T')[0];
+          return logDate === todayStr;
         });
-        const today = new Date().toLocaleDateString('en-CA');
-        const isTodayLogged = attRes.data.some(log => {
-          const logDate = new Date(log.date).toLocaleDateString('en-CA');
-          return logDate === today;
-        });
-        setCheckedIn(isTodayLogged);
+        
+        if (todayLog) {
+          setCheckedIn(true);
+          setCheckedOut(!!todayLog.check_out);
+        }
       } catch (err) {
         console.error(err);
         setLoading(false);
@@ -64,6 +66,18 @@ export default function EmployeeDashboard() {
       setCheckedIn(true);
     } catch (err) {
       alert(err.response?.data?.message || "Check-in failed");
+    }
+  };
+
+  const handleCheckOut = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/attendance/check-out`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setCheckedOut(true);
+    } catch (err) {
+      alert(err.response?.data?.message || "Check-out failed");
     }
   };
 
@@ -109,6 +123,14 @@ export default function EmployeeDashboard() {
                 >
                   <Zap size={18} className="text-indigo-500 group-hover:animate-pulse" />
                   Clock In Session
+                </button>
+              ) : !checkedOut ? (
+                <button 
+                  onClick={handleCheckOut}
+                  className="group relative bg-rose-500 text-white px-6 md:px-8 py-3 md:py-3.5 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all shadow-xl hover:shadow-2xl hover:bg-rose-600 hover:scale-105 active:scale-95 flex items-center gap-3 border border-rose-400/30"
+                >
+                  <Clock size={18} className="text-white group-hover:animate-spin" />
+                  Clock Out Session
                 </button>
               ) : (
                 <div className="bg-emerald-500/20 backdrop-blur-md text-white px-6 md:px-8 py-3 md:py-3.5 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest flex items-center gap-3 border border-emerald-500/30">
