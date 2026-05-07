@@ -2,11 +2,10 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
     host: "smtp.gmail.com",
     port: 587,
     secure: false,
-    family: 4, // Force IPv4 connection to solve ENETUNREACH on Render
+    family: 4, // Force IPv4 connection
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, '') : ''
