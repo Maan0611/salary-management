@@ -5,8 +5,8 @@ const dns = require('dns');
 console.log("Initializing SMTP Transport (v6) - Forcing IPv4 via DNS...");
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false, // Use STARTTLS for Port 587
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, '') : ''
@@ -14,11 +14,10 @@ const transporter = nodemailer.createTransport({
     tls: {
         rejectUnauthorized: false
     },
-    connectionTimeout: 20000,
-    greetingTimeout: 20000,
-    socketTimeout: 20000,
+    connectionTimeout: 30000, // 30 seconds
+    greetingTimeout: 30000,
+    socketTimeout: 30000,
     dnsLookup: (hostname, options, callback) => {
-        // Force IPv4 lookup
         dns.lookup(hostname, { family: 4 }, callback);
     }
 });
