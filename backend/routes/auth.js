@@ -147,19 +147,20 @@ router.post("/send-otp", async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = new Date(Date.now() + 5 * 60000); // 5 mins
 
-        db.query("CREATE TABLE IF NOT EXISTS otp_codes (id INT AUTO_INCREMENT PRIMARY KEY, email VARCHAR(100), otp VARCHAR(6), expires_at DATETIME)", (err) => {
-            if (err) return res.status(500).json({ message: "System error" });
+        // Insert OTP then send email
+        db.query("INSERT INTO otp_codes (email, otp, expires_at) VALUES (?, ?, ?)", [userEmail, otp, expiresAt], async (err) => {
+            if (err) {
+                console.error("OTP DB Error:", err);
+                return res.status(500).json({ message: "Error generating verification code" });
+            }
 
-            db.query("INSERT INTO otp_codes (email, otp, expires_at) VALUES (?, ?, ?)", [userEmail, otp, expiresAt], async (err) => {
-                if (err) return res.status(500).json({ message: "Database error" });
-
-                const emailSent = await sendOTPEmail(userEmail, userName, otp);
-                if (emailSent.success) {
-                    res.json({ message: "OTP sent successfully to " + userEmail.replace(/(.{2})(.*)(@.*)/, "$1***$3") });
-                } else {
-                    res.status(500).json({ message: "Failed to send email. Check SMTP settings." });
-                }
-            });
+            const emailSent = await sendOTPEmail(userEmail, userName, otp);
+            if (emailSent.success) {
+                res.json({ message: "OTP sent successfully to " + userEmail.replace(/(.{2})(.*)(@.*)/, "$1***$3") });
+            } else {
+                console.error("OTP Email Error:", emailSent.error);
+                res.status(500).json({ message: "Failed to send email. Check SMTP settings." });
+            }
         });
     });
 });
