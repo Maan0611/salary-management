@@ -1,33 +1,27 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
-const dns = require('dns');
 
-console.log("Initializing SMTP Transport (v6) - Forcing IPv4 via DNS...");
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
+    service: "gmail",
+    host: "smtp.gmail.com",
     port: 587,
-    secure: false, // Use STARTTLS for Port 587
+    secure: false,
+    family: 4, // Force IPv4 connection to solve ENETUNREACH on Render
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, '') : ''
     },
     tls: {
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
     },
-    connectionTimeout: 30000, // 30 seconds
-    greetingTimeout: 30000,
-    socketTimeout: 30000,
-    dnsLookup: (hostname, options, callback) => {
-        dns.lookup(hostname, { family: 4 }, callback);
-    }
 });
 
-// Verify connection configuration
-transporter.verify(function (error, success) {
+// Verify SMTP connection
+transporter.verify((error, success) => {
     if (error) {
-        console.log("SMTP Connection Error: ", error);
+        console.log("SMTP Connection Error ❌:", error);
     } else {
-        console.log("SMTP Server is ready to take our messages");
+        console.log("SMTP Server Ready to Send Emails ✅");
     }
 });
 
