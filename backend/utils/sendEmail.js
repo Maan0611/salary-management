@@ -10,9 +10,10 @@ const transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, '') : ''
     },
     tls: {
-        rejectUnauthorized: false // Required for some cloud environments
+        rejectUnauthorized: false
     },
-    connectionTimeout: 20000, // Increased timeout
+    connectionTimeout: 20000,
+    family: 4 // Force IPv4 to avoid ENETUNREACH on IPv6
 });
 
 // Verify connection configuration
