@@ -78,14 +78,19 @@ exports.approveRequest = async (req, res) => {
             if (request_type === 'Half Day') {
                 daysToSubtract = 0.5;
                 if (from_date) datesToUpdate.push(new Date(from_date));
-            } else if (from_date && to_date) {
+            } else if (from_date) {
                 const start = new Date(from_date);
-                const end = new Date(to_date);
+                const end = to_date ? new Date(to_date) : new Date(from_date);
+                
+                // Difference in days (inclusive)
                 daysToSubtract = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+                if (isNaN(daysToSubtract) || daysToSubtract < 0) daysToSubtract = 0;
                 
                 // Collect all dates in range
-                for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-                    datesToUpdate.push(new Date(d));
+                if (daysToSubtract > 0) {
+                    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                        datesToUpdate.push(new Date(d));
+                    }
                 }
             }
 
