@@ -272,7 +272,7 @@ export default function EmployeeDashboard() {
             <div className="text-3xl md:text-4xl font-black tracking-tighter mb-2">
               <CountUp end={stats.leaveBalance} duration={2} /> Days
             </div>
-            <Link to="/employee/leave" className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg transition-all">
+            <Link to="/employee/requests" className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg transition-all">
               Request <ArrowRight size={10} />
             </Link>
             <Zap size={64} className="absolute -right-4 -bottom-4 text-white/10 rotate-12 group-hover:scale-110 transition-transform" />
@@ -316,7 +316,7 @@ export default function EmployeeDashboard() {
               <ChevronRight size={20} className="text-slate-300 group-hover:text-white group-hover:translate-x-1 transition-all relative z-10" />
             </Link>
 
-            <Link to="/employee/leave" className="group flex items-center justify-between p-6 glass-card rounded-[2rem] hover:bg-purple-600 transition-all duration-500 overflow-hidden relative bg-white border border-slate-100 shadow-sm">
+            <Link to="/employee/requests" className="group flex items-center justify-between p-6 glass-card rounded-[2rem] hover:bg-purple-600 transition-all duration-500 overflow-hidden relative bg-white border border-slate-100 shadow-sm">
               <div className="flex items-center gap-5 relative z-10">
                 <div className="w-12 md:w-14 h-12 md:h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-white/20 group-hover:text-white transition-all duration-500 shadow-inner">
                   <Clock size={24} strokeWidth={2.5} />

@@ -47,7 +47,7 @@ function App() {
         <Route path="/employee/dashboard" element={<ProtectedRoute><EmployeeLayout><EmployeeDashboard /></EmployeeLayout></ProtectedRoute>} />
         <Route path="/employee/attendance" element={<ProtectedRoute><EmployeeLayout><EmployeeAttendance /></EmployeeLayout></ProtectedRoute>} />
         <Route path="/employee/salary" element={<ProtectedRoute><EmployeeLayout><EmployeeSalary /></EmployeeLayout></ProtectedRoute>} />
-        <Route path="/employee/leave" element={<ProtectedRoute><EmployeeLayout><EmployeeLeave /></EmployeeLayout></ProtectedRoute>} />
+        <Route path="/employee/leave" element={<ProtectedRoute><EmployeeLayout><MyRequests /></EmployeeLayout></ProtectedRoute>} />
         <Route path="/employee/requests" element={<ProtectedRoute><EmployeeLayout><MyRequests /></EmployeeLayout></ProtectedRoute>} />
         <Route path="/employee/announcements" element={<ProtectedRoute><EmployeeLayout><EmployeeAnnouncements /></EmployeeLayout></ProtectedRoute>} />
         <Route path="/employee/settings" element={<ProtectedRoute><EmployeeLayout><EmployeeSettings /></EmployeeLayout></ProtectedRoute>} />

@@ -155,11 +155,15 @@ export default function MyRequests() {
                     value={formData.request_type}
                     onChange={(e) => setFormData({...formData, request_type: e.target.value})}
                   >
-                    <option value="Leave Request">Leave Request</option>
+                    <option value="Leave Request">Full Day Leave</option>
+                    <option value="Casual Leave">Casual Leave</option>
+                    <option value="Sick Leave">Sick Leave</option>
+                    <option value="Emergency Leave">Emergency Leave</option>
                     <option value="Half Day">Half Day</option>
                     <option value="Work From Home">Work From Home</option>
                     <option value="Salary Advance">Salary Advance</option>
                     <option value="Profile Update">Profile Update</option>
+                    <option value="Maternity/Paternity">Maternity/Paternity</option>
                   </select>
                 </div>
 
