@@ -9,6 +9,7 @@ import {
 export default function EmployeeAttendance() {
   const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
     const fetchAttendance = async () => {
@@ -27,12 +28,37 @@ export default function EmployeeAttendance() {
     fetchAttendance();
   }, []);
 
-  const stats = {
-    present: attendance.filter(a => a.status === 'Present').length,
-    absent: attendance.filter(a => a.status === 'Absent').length,
-    late: attendance.filter(a => a.status === 'Late').length,
-    leave: attendance.filter(a => a.status === 'Leave' || a.status === 'Half Day').length
+  const prevMonth = () => {
+    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
   };
+
+  const nextMonth = () => {
+    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+  };
+
+  const filteredAttendance = attendance.filter(a => {
+    const d = new Date(a.date);
+    return d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
+  });
+
+  const stats = {
+    present: filteredAttendance.filter(a => a.status === 'Present').length,
+    absent: filteredAttendance.filter(a => a.status === 'Absent').length,
+    late: filteredAttendance.filter(a => a.status === 'Late').length,
+    leave: filteredAttendance.filter(a => a.status === 'Leave' || a.status === 'Half Day').length
+  };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[70vh]">
+        <div className="relative w-16 h-16">
+          <div className="absolute top-0 left-0 w-full h-full border-4 border-indigo-500/10 rounded-full"></div>
+          <div className="absolute top-0 left-0 w-full h-full border-4 border-indigo-600 rounded-full animate-spin border-t-transparent"></div>
+        </div>
+        <p className="mt-4 text-slate-400 font-bold uppercase tracking-widest text-xs animate-pulse">Fetching Attendance Data...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 pb-12">
@@ -42,9 +68,11 @@ export default function EmployeeAttendance() {
           <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mt-1">Monitor your daily presence and punctuality</p>
         </div>
         <div className="flex items-center gap-3 bg-white p-2 rounded-2xl border border-slate-100 shadow-sm w-full sm:w-auto justify-between sm:justify-start">
-          <button className="p-2 hover:bg-slate-50 rounded-xl text-slate-400 transition"><ChevronLeft size={20} /></button>
-          <span className="text-xs font-black text-slate-600 uppercase tracking-widest px-2">April 2026</span>
-          <button className="p-2 hover:bg-slate-50 rounded-xl text-slate-400 transition"><ChevronRight size={20} /></button>
+          <button onClick={prevMonth} className="p-2 hover:bg-slate-50 rounded-xl text-slate-400 transition"><ChevronLeft size={20} /></button>
+          <span className="text-xs font-black text-slate-600 uppercase tracking-widest px-2">
+            {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+          </span>
+          <button onClick={nextMonth} className="p-2 hover:bg-slate-50 rounded-xl text-slate-400 transition"><ChevronRight size={20} /></button>
         </div>
       </div>
 
@@ -85,7 +113,7 @@ export default function EmployeeAttendance() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {attendance.map((log) => (
+              {filteredAttendance.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-50/50 transition">
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-3">
