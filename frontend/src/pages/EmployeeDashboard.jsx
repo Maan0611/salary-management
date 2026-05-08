@@ -270,7 +270,7 @@ export default function EmployeeDashboard() {
           <div className="h-[148px] glass-card rounded-[2rem] md:rounded-[2.5rem] p-6 bg-gradient-to-br from-purple-600 to-indigo-700 text-white relative overflow-hidden group">
             <p className="text-purple-200 text-[10px] font-black uppercase tracking-[0.2em] mb-1">Leave Credits</p>
             <div className="text-3xl md:text-4xl font-black tracking-tighter mb-2">
-              <CountUp end={stats.leaveBalance} duration={2} /> Days
+              <CountUp end={stats.leaveBalance} duration={2} decimals={stats.leaveBalance % 1 !== 0 ? 1 : 0} /> Days
             </div>
             <Link to="/employee/requests" className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg transition-all">
               Request <ArrowRight size={10} />

@@ -180,7 +180,7 @@ export default function EditEmployee() {
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Leave Credits</label>
                     <div className="relative">
-                      <input type="number" name="leave_balance" value={formData.leave_balance} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-indigo-600 outline-none transition-all font-bold text-slate-700" />
+                      <input type="number" step="0.5" name="leave_balance" value={formData.leave_balance} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-indigo-600 outline-none transition-all font-bold text-slate-700" />
                       <PlaneTakeoff size={18} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300" />
                     </div>
                   </div>
