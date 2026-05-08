@@ -49,15 +49,52 @@ exports.getAllRequests = (req, res) => {
     });
 };
 
-exports.approveRequest = (req, res) => {
+exports.approveRequest = async (req, res) => {
     const { id } = req.params;
     const { admin_remark } = req.body;
-    const sql = "UPDATE requests SET status = 'Approved', admin_remark = ? WHERE id = ?";
-    db.query(sql, [admin_remark, id], (err) => {
-        if (err) return res.status(500).json({ message: "Update failed" });
+
+    try {
+        // 1. Get request details to calculate leave days
+        const [request] = await db.promise().query("SELECT * FROM requests WHERE id = ?", [id]);
+        if (request.length === 0) {
+            return res.status(404).json({ message: "Request not found" });
+        }
+
+        const { employee_id, request_type, from_date, to_date } = request[0];
+
+        // 2. Update request status
+        await db.promise().query(
+            "UPDATE requests SET status = 'Approved', admin_remark = ? WHERE id = ?",
+            [admin_remark, id]
+        );
+
+        // 3. Update Leave Balance if applicable
+        const leaveTypes = ['Leave Request', 'Half Day', 'Casual Leave', 'Sick Leave', 'Emergency Leave', 'Maternity/Paternity'];
         
-        res.json({ message: "Request approved" });
-    });
+        if (leaveTypes.includes(request_type)) {
+            let daysToSubtract = 0;
+            if (request_type === 'Half Day') {
+                daysToSubtract = 0.5;
+            } else if (from_date && to_date) {
+                const start = new Date(from_date);
+                const end = new Date(to_date);
+                // Difference in days (inclusive)
+                daysToSubtract = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+            }
+
+            if (daysToSubtract > 0) {
+                await db.promise().query(
+                    "UPDATE employees SET leave_balance = leave_balance - ? WHERE id = ?",
+                    [daysToSubtract, employee_id]
+                );
+            }
+        }
+
+        res.json({ message: "Request approved and balance updated successfully" });
+    } catch (err) {
+        console.error("Error in approveRequest:", err);
+        res.status(500).json({ message: "Failed to approve request", detail: err.message });
+    }
 };
 
 exports.rejectRequest = (req, res) => {

@@ -19,7 +19,7 @@ export default function AddEmployee() {
     position: "", 
     basic_salary: "", 
     join_date: "", 
-    leave_balance: 0, 
+    leave_balance: 12, 
     password: ""
   });
   const [error, setError] = useState("");
