@@ -68,29 +68,49 @@ exports.approveRequest = async (req, res) => {
             [admin_remark, id]
         );
 
-        // 3. Update Leave Balance if applicable
+        // 3. Update Leave Balance and Attendance if applicable
         const leaveTypes = ['Leave Request', 'Half Day', 'Casual Leave', 'Sick Leave', 'Emergency Leave', 'Maternity/Paternity'];
         
         if (leaveTypes.includes(request_type)) {
             let daysToSubtract = 0;
+            const datesToUpdate = [];
+
             if (request_type === 'Half Day') {
                 daysToSubtract = 0.5;
+                if (from_date) datesToUpdate.push(new Date(from_date));
             } else if (from_date && to_date) {
                 const start = new Date(from_date);
                 const end = new Date(to_date);
-                // Difference in days (inclusive)
                 daysToSubtract = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+                
+                // Collect all dates in range
+                for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                    datesToUpdate.push(new Date(d));
+                }
             }
 
+            // A. Deduct Leave Balance
             if (daysToSubtract > 0) {
                 await db.promise().query(
                     "UPDATE employees SET leave_balance = leave_balance - ? WHERE id = ?",
                     [daysToSubtract, employee_id]
                 );
             }
+
+            // B. Auto-Update Attendance Table
+            const attendanceStatus = request_type === 'Half Day' ? 'Half Day' : 'Leave';
+            for (const dateObj of datesToUpdate) {
+                const formattedDate = dateObj.toISOString().slice(0, 10);
+                
+                await db.promise().query(`
+                    INSERT INTO attendance (emp_id, date, status, notes) 
+                    VALUES (?, ?, ?, ?) 
+                    ON DUPLICATE KEY UPDATE status = VALUES(status), notes = VALUES(notes)
+                `, [employee_id, formattedDate, attendanceStatus, `Approved ${request_type}: ${admin_remark || ''}`]);
+            }
         }
 
-        res.json({ message: "Request approved and balance updated successfully" });
+        res.json({ message: "Request approved, balance updated, and attendance synced" });
     } catch (err) {
         console.error("Error in approveRequest:", err);
         res.status(500).json({ message: "Failed to approve request", detail: err.message });
