@@ -31,6 +31,7 @@ export default function EmployeeAttendance() {
     present: attendance.filter(a => a.status === 'Present').length,
     absent: attendance.filter(a => a.status === 'Absent').length,
     late: attendance.filter(a => a.status === 'Late').length,
+    leave: attendance.filter(a => a.status === 'Leave' || a.status === 'Half Day').length
   };
 
   return (
@@ -59,8 +60,8 @@ export default function EmployeeAttendance() {
           <UserMinus className="absolute right-4 bottom-4 text-rose-200 opacity-50" size={48} />
         </div>
         <div className="bg-amber-50 p-6 rounded-2xl border border-amber-100 relative overflow-hidden">
-          <p className="text-amber-600 font-black text-[10px] uppercase tracking-widest mb-1">Late Arrivals</p>
-          <h2 className="text-3xl font-black text-amber-700">{stats.late} Days</h2>
+          <p className="text-amber-600 font-black text-[10px] uppercase tracking-widest mb-1">Leaves & Half Days</p>
+          <h2 className="text-3xl font-black text-amber-700">{stats.leave} Days</h2>
           <Clock className="absolute right-4 bottom-4 text-amber-200 opacity-50" size={48} />
         </div>
       </div>
@@ -100,7 +101,10 @@ export default function EmployeeAttendance() {
                     <div className="flex justify-center">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
                         log.status === 'Present' ? 'bg-emerald-50 text-emerald-600' : 
-                        log.status === 'Late' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
+                        log.status === 'Late' ? 'bg-amber-50 text-amber-600' : 
+                        log.status === 'Half Day' ? 'bg-amber-50 text-amber-600' :
+                        log.status === 'Leave' ? 'bg-indigo-50 text-indigo-600' :
+                        'bg-rose-50 text-rose-600'
                       }`}>
                         {log.status}
                       </span>

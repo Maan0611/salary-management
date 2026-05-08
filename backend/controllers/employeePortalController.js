@@ -17,6 +17,9 @@ exports.getDashboardStats = async (req, res) => {
         );
         stats.presentDays = attendance.find(a => a.status === 'Present')?.count || 0;
         stats.absentDays = attendance.find(a => a.status === 'Absent')?.count || 0;
+        stats.leaveDays = attendance.find(a => a.status === 'Leave')?.count || 0;
+        stats.halfDays = attendance.find(a => a.status === 'Half Day')?.count || 0;
+        stats.lateDays = attendance.find(a => a.status === 'Late')?.count || 0;
 
         // 2. Salary Stats (Current Month + Total Paid)
         const [salary] = await db.promise().query(
