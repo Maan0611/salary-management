@@ -28,16 +28,37 @@ const saveAttendance = async (req, res) => {
     for (const record of attendanceData) {
       const { emp_id, status, check_in, check_out, notes } = record;
 
-      // Check if record exists
+      // Check if record exists to determine status change
       const [existing] = await db.promise().query(
-        "SELECT id FROM attendance WHERE emp_id = ? AND date = ?",
+        "SELECT status FROM attendance WHERE emp_id = ? AND date = ?",
         [emp_id, saveDate]
       );
 
+      const oldStatus = existing.length > 0 ? existing[0].status : null;
+      
+      // Calculate balance adjustment
+      let adjustment = 0;
+      
+      // Refund old status if it was a leave
+      if (oldStatus === 'Leave') adjustment += 1;
+      else if (oldStatus === 'Half Day') adjustment += 0.5;
+      
+      // Deduct new status if it is a leave
+      if (status === 'Leave') adjustment -= 1;
+      else if (status === 'Half Day') adjustment -= 0.5;
+
+      // Update balance if there's a change
+      if (adjustment !== 0) {
+        await db.promise().query(
+          "UPDATE employees SET leave_balance = leave_balance + ? WHERE id = ?",
+          [adjustment, emp_id]
+        );
+      }
+
       if (existing.length > 0) {
         await db.promise().query(
-          "UPDATE attendance SET status = ?, check_in = ?, check_out = ?, notes = ? WHERE id = ?",
-          [status, check_in || null, check_out || null, notes || null, existing[0].id]
+          "UPDATE attendance SET status = ?, check_in = ?, check_out = ?, notes = ? WHERE emp_id = ? AND date = ?",
+          [status, check_in || null, check_out || null, notes || null, emp_id, saveDate]
         );
       } else {
         await db.promise().query(
@@ -47,7 +68,7 @@ const saveAttendance = async (req, res) => {
       }
     }
 
-    res.json({ message: "Attendance saved successfully" });
+    res.json({ message: "Attendance saved and leave balances updated" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -58,12 +79,36 @@ const updateAttendance = async (req, res) => {
     const { id } = req.params;
     const { status, check_in, check_out, notes } = req.body;
 
+    // Get existing record to handle balance adjustment
+    const [existing] = await db.promise().query(
+      "SELECT emp_id, status FROM attendance WHERE id = ?",
+      [id]
+    );
+
+    if (existing.length > 0) {
+      const { emp_id, status: oldStatus } = existing[0];
+      let adjustment = 0;
+      
+      if (oldStatus === 'Leave') adjustment += 1;
+      else if (oldStatus === 'Half Day') adjustment += 0.5;
+      
+      if (status === 'Leave') adjustment -= 1;
+      else if (status === 'Half Day') adjustment -= 0.5;
+
+      if (adjustment !== 0) {
+        await db.promise().query(
+          "UPDATE employees SET leave_balance = leave_balance + ? WHERE id = ?",
+          [adjustment, emp_id]
+        );
+      }
+    }
+
     await db.promise().query(
       "UPDATE attendance SET status = ?, check_in = ?, check_out = ?, notes = ? WHERE id = ?",
       [status, check_in || null, check_out || null, notes || null, id]
     );
 
-    res.json({ message: "Attendance updated successfully" });
+    res.json({ message: "Attendance and leave balance updated successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

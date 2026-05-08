@@ -163,7 +163,7 @@ export default function MyRequests() {
                     <option value="Work From Home">Work From Home</option>
                     <option value="Salary Advance">Salary Advance</option>
                     <option value="Profile Update">Profile Update</option>
-                    <option value="Maternity/Paternity">Maternity/Paternity</option>
+                    
                   </select>
                 </div>
 
