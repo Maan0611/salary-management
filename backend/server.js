@@ -81,7 +81,7 @@ const initDB = async () => {
         id INT AUTO_INCREMENT PRIMARY KEY,
         emp_id INT NOT NULL,
         date DATE NOT NULL,
-        status ENUM('Present', 'Absent', 'Late', 'Half Day') DEFAULT 'Present',
+        status ENUM('Present', 'Absent', 'Late', 'Half Day', 'Leave') DEFAULT 'Present',
         check_in VARCHAR(20),
         check_out VARCHAR(20),
         notes TEXT,
@@ -163,6 +163,15 @@ const initDB = async () => {
     for (const q of queries) {
       await db.promise().query(q);
     }
+    // Add migration for attendance status enum
+    try {
+      await db.promise().query("ALTER TABLE attendance MODIFY COLUMN status ENUM('Present', 'Absent', 'Late', 'Half Day', 'Leave') DEFAULT 'Present'");
+      console.log("Attendance table migrated successfully ✅");
+    } catch (migrationErr) {
+      // Ignore error if it fails (e.g. column already has the new enum or table doesn't exist yet)
+      console.log("Migration (attendance status) skipped or already applied");
+    }
+
     console.log("Core tables verified ✅");
 
     // Check if admin exists, if not create one

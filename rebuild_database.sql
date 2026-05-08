@@ -51,7 +51,7 @@ CREATE TABLE attendance (
   id INT AUTO_INCREMENT PRIMARY KEY,
   emp_id INT NOT NULL,
   date DATE NOT NULL,
-  status ENUM('Present', 'Absent', 'Late', 'Half Day') DEFAULT 'Present',
+  status ENUM('Present', 'Absent', 'Late', 'Half Day', 'Leave') DEFAULT 'Present',
   check_in VARCHAR(20),
   check_out VARCHAR(20),
   notes TEXT,
