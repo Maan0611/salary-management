@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
-import { 
-  Search, FileText, 
-  CreditCard, Clock, CheckCircle, AlertCircle, Edit, 
+import {
+  Search, FileText,
+  CreditCard, Clock, CheckCircle, AlertCircle, Edit,
   Trash2, Calendar, MoreVertical,
   Plus, RefreshCw, FileSpreadsheet, ChevronDown,
   TrendingUp, Wallet, Receipt, CheckCircle2, XCircle, Info
@@ -30,7 +30,7 @@ export default function Salary() {
   const [message, setMessage] = useState(null);
 
   const months = [
-    { value: "01", label: "January" }, { value: "02", label: "February" }, 
+    { value: "01", label: "January" }, { value: "02", label: "February" },
     { value: "03", label: "March" }, { value: "04", label: "April" },
     { value: "05", label: "May" }, { value: "06", label: "June" },
     { value: "07", label: "July" }, { value: "08", label: "August" },
@@ -63,9 +63,9 @@ export default function Salary() {
     try {
       setGenerating(true);
       const token = sessionStorage.getItem("token");
-      await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/salary/generate`, { 
-        month: selectedMonth, 
-        year: selectedYear 
+      await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/salary/generate`, {
+        month: selectedMonth,
+        year: selectedYear
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -179,8 +179,8 @@ export default function Salary() {
 
   const filteredRecords = useMemo(() => {
     return salaryRecords.filter(s => {
-      const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           s.employee_code.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.employee_code.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = filterStatus === "All" || s.status === filterStatus;
       return matchesSearch && matchesStatus;
     });
@@ -206,33 +206,33 @@ export default function Salary() {
 
   const generatePayslip = (salary) => {
     const doc = new jsPDF();
-    
+
     // --- Header Section ---
     doc.setFillColor(30, 41, 59); // slate-800
     doc.rect(0, 0, 210, 50, 'F');
-    
+
     // Company Branding
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(28);
     doc.setFont("helvetica", "bold");
     doc.text("NEXUS HR", 14, 25);
-    
+
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     doc.text("Enterprise Solutions & Workforce Management", 14, 32);
     doc.text("Tech Park, Building 4, Sector 62, Noida, UP", 14, 37);
-    
+
     // Payslip Title & Period
     doc.setFontSize(20);
     doc.setFont("helvetica", "bold");
     doc.text("SALARY PAYSLIP", 196, 25, { align: 'right' });
-    
+
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const monthLabel = monthNames[parseInt(salary.month) - 1] || salary.month;
     doc.text(`${monthLabel} ${salary.year}`, 196, 33, { align: 'right' });
-    
+
     // --- Employee & Record Details ---
     doc.setTextColor(30, 41, 59);
     doc.setFontSize(12);
@@ -240,40 +240,40 @@ export default function Salary() {
     doc.text("EMPLOYEE DETAILS", 14, 65);
     doc.setDrawColor(226, 232, 240); // slate-200
     doc.line(14, 67, 196, 67);
-    
+
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     // Left Column
     doc.text(`Employee Name:`, 14, 75);
     doc.setFont("helvetica", "bold");
     doc.text(`${salary.name}`, 45, 75);
-    
+
     doc.setFont("helvetica", "normal");
     doc.text(`Employee ID:`, 14, 82);
     doc.setFont("helvetica", "bold");
     doc.text(`${salary.employee_code || 'N/A'}`, 45, 82);
-    
+
     doc.setFont("helvetica", "normal");
     doc.text(`Designation:`, 14, 89);
     doc.setFont("helvetica", "bold");
     doc.text(`${salary.position || 'Specialist'}`, 45, 89);
-    
+
     // Right Column
     doc.setFont("helvetica", "normal");
     doc.text(`Department:`, 110, 75);
     doc.setFont("helvetica", "bold");
     doc.text(`${salary.department || 'Operations'}`, 140, 75);
-    
+
     doc.setFont("helvetica", "normal");
     doc.text(`Payment Date:`, 110, 82);
     doc.setFont("helvetica", "bold");
     doc.text(`${salary.payment_date ? new Date(salary.payment_date).toLocaleDateString() : 'Awaiting'}`, 140, 82);
-    
+
     doc.setFont("helvetica", "normal");
     doc.text(`Status:`, 110, 89);
     doc.setFont("helvetica", "bold");
     doc.text(`${salary.status.toUpperCase()}`, 140, 89);
-    
+
     // --- Financial Table ---
     autoTable(doc, {
       startY: 100,
@@ -287,8 +287,8 @@ export default function Salary() {
         [{ content: 'NET TAKE HOME PAY', colSpan: 3, styles: { fontStyle: 'bold', fillColor: [248, 250, 252] } }, { content: `${parseFloat(salary.net_salary).toLocaleString()}`, styles: { fontStyle: 'bold', fillColor: [248, 250, 252] } }]
       ],
       theme: 'striped',
-      headStyles: { 
-        fillColor: [79, 70, 229], 
+      headStyles: {
+        fillColor: [79, 70, 229],
         textColor: [255, 255, 255],
         fontSize: 11,
         fontStyle: 'bold',
@@ -299,29 +299,29 @@ export default function Salary() {
         2: { halign: 'center' },
         3: { halign: 'right', fontStyle: 'bold' }
       },
-      styles: { 
+      styles: {
         fontSize: 10,
         cellPadding: 6
       }
     });
-    
+
     // --- Footer Section ---
     const finalY = doc.lastAutoTable.finalY + 30;
-    
+
     doc.setDrawColor(226, 232, 240);
     doc.line(14, finalY, 70, finalY);
     doc.line(140, finalY, 196, finalY);
-    
+
     doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
     doc.text("Employee Signature", 42, finalY + 5, { align: 'center' });
     doc.text("Authorized Signatory", 168, finalY + 5, { align: 'center' });
-    
+
     doc.setTextColor(148, 163, 184); // slate-400
     doc.setFontSize(8);
     doc.setFont("helvetica", "italic");
     doc.text("This is a computer-generated payslip and does not require a physical stamp.", 105, 280, { align: 'center' });
-    
+
     doc.save(`Payslip_${salary.name}_${monthLabel}_${selectedYear}.pdf`);
   };
 
@@ -349,13 +349,13 @@ export default function Salary() {
               Payroll <span className="text-indigo-600">Distribution</span>
             </h1>
             <p className="text-slate-500 mt-2 font-medium flex items-center gap-2">
-              <Calendar size={18} className="text-indigo-500" /> 
+              <Calendar size={18} className="text-indigo-500" />
               Managing compensation for <span className="text-slate-900 font-bold">{selectedMonth}/{selectedYear}</span>
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-            <button 
+            <button
               onClick={handleGenerate}
               disabled={generating}
               className="flex-1 lg:flex-none flex items-center justify-center gap-3 bg-indigo-600 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition-all active:scale-95 disabled:opacity-50"
@@ -388,6 +388,7 @@ export default function Salary() {
                 <div className={`p-3 rounded-xl bg-${card.color}-500/10 text-${card.color}-600`}>
                   <card.icon size={24} strokeWidth={2.5} />
                 </div>
+
               </div>
               <div>
                 <p className="text-slate-500 font-bold text-[10px] uppercase tracking-widest">{card.label}</p>
@@ -403,21 +404,21 @@ export default function Salary() {
             <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 tracking-widest">Search Employee</label>
             <div className="relative group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-indigo-500 transition-colors" size={18} />
-              <input 
-                type="text" 
-                placeholder="ID, Name or Dept..." 
+              <input
+                type="text"
+                placeholder="ID, Name or Dept..."
                 className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 lg:flex gap-4">
             <div className="min-w-[140px]">
               <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 tracking-widest">Month</label>
               <div className="relative group">
-                <select 
+                <select
                   className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold appearance-none focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none cursor-pointer"
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
@@ -427,11 +428,11 @@ export default function Salary() {
                 <ChevronDown size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
             </div>
-            
+
             <div className="min-w-[120px]">
               <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 tracking-widest">Year</label>
               <div className="relative group">
-                <select 
+                <select
                   className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold appearance-none focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none cursor-pointer"
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
@@ -446,7 +447,7 @@ export default function Salary() {
           <div className="min-w-[160px]">
             <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 tracking-widest">Status</label>
             <div className="relative group">
-              <select 
+              <select
                 className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold appearance-none focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none cursor-pointer"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
@@ -461,7 +462,7 @@ export default function Salary() {
             </div>
           </div>
 
-          <button 
+          <button
             onClick={fetchSalaries}
             className="p-3.5 bg-slate-50 border border-slate-200 text-slate-400 hover:text-indigo-600 hover:bg-white hover:border-indigo-100 rounded-xl transition-all shadow-sm active:rotate-180 duration-500"
             title="Refresh Data"
@@ -473,7 +474,7 @@ export default function Salary() {
         {/* Bulk Action Bar */}
         <AnimatePresence>
           {selectedIds.length > 0 && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
@@ -486,13 +487,13 @@ export default function Salary() {
                 <p className="font-bold">Records Selected</p>
               </div>
               <div className="flex gap-3">
-                <button 
+                <button
                   onClick={() => setSelectedIds([])}
                   className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-xl font-bold transition-all"
                 >
                   Clear
                 </button>
-                <button 
+                <button
                   onClick={handleBulkApprove}
                   className="px-6 py-2 bg-white text-indigo-600 hover:bg-indigo-50 rounded-xl font-bold transition-all shadow-lg"
                 >
@@ -506,7 +507,7 @@ export default function Salary() {
         {/* Message Alert */}
         <AnimatePresence>
           {message && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -527,8 +528,8 @@ export default function Salary() {
               <thead>
                 <tr className="bg-slate-50/80 border-b border-slate-100">
                   <th className="pl-8 pr-4 py-6 w-10">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       className="w-5 h-5 rounded-lg accent-indigo-600"
                       checked={selectedIds.length === filteredRecords.length && filteredRecords.length > 0}
                       onChange={(e) => {
@@ -546,7 +547,7 @@ export default function Salary() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredRecords.map((s, i) => (
-                  <motion.tr 
+                  <motion.tr
                     key={s.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -554,8 +555,8 @@ export default function Salary() {
                     className={`hover:bg-indigo-50/30 transition-all group ${selectedIds.includes(s.id) ? 'bg-indigo-50/50' : ''}`}
                   >
                     <td className="pl-8 pr-4 py-6">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         className="w-5 h-5 rounded-lg accent-indigo-600"
                         checked={selectedIds.includes(s.id)}
                         onChange={() => toggleSelect(s.id)}
@@ -605,18 +606,16 @@ export default function Salary() {
                       </div>
                     </td>
                     <td className="px-8 py-6 text-center">
-                      <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${
-                        s.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20' : 
-                        s.status === 'Approved' ? 'bg-indigo-500/10 text-indigo-600 border border-indigo-500/20' :
-                        s.status === 'Rejected' ? 'bg-rose-500/10 text-rose-600 border border-rose-500/20' :
-                        'bg-slate-500/10 text-slate-600 border border-slate-500/20'
-                      }`}>
-                        <div className={`w-1.5 h-1.5 rounded-full ${
-                          s.status === 'Paid' ? 'bg-emerald-500' : 
-                          s.status === 'Approved' ? 'bg-indigo-500' :
-                          s.status === 'Rejected' ? 'bg-rose-500' :
-                          'bg-slate-400'
-                        }`}></div>
+                      <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${s.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20' :
+                          s.status === 'Approved' ? 'bg-indigo-500/10 text-indigo-600 border border-indigo-500/20' :
+                            s.status === 'Rejected' ? 'bg-rose-500/10 text-rose-600 border border-rose-500/20' :
+                              'bg-slate-500/10 text-slate-600 border border-slate-500/20'
+                        }`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${s.status === 'Paid' ? 'bg-emerald-500' :
+                            s.status === 'Approved' ? 'bg-indigo-500' :
+                              s.status === 'Rejected' ? 'bg-rose-500' :
+                                'bg-slate-400'
+                          }`}></div>
                         {s.status}
                       </span>
                       {(s.payment_date || s.approved_at) && (
@@ -629,15 +628,15 @@ export default function Salary() {
                       <div className="flex items-center justify-end gap-2">
                         {s.status === 'Draft' || s.status === 'Rejected' ? (
                           <>
-                            <button 
+                            <button
                               onClick={() => handleApprove(s.id)}
                               className="w-10 h-10 flex items-center justify-center bg-emerald-500 text-white shadow-lg shadow-emerald-200 hover:bg-emerald-600 rounded-xl transition-all"
                               title="Approve Record"
                             >
                               <CheckCircle2 size={18} />
                             </button>
-                            <button 
-                              onClick={() => {setRejectId(s.id); setShowRejectModal(true);}}
+                            <button
+                              onClick={() => { setRejectId(s.id); setShowRejectModal(true); }}
                               className="w-10 h-10 flex items-center justify-center bg-rose-500 text-white shadow-lg shadow-rose-200 hover:bg-rose-600 rounded-xl transition-all"
                               title="Reject Record"
                             >
@@ -645,7 +644,7 @@ export default function Salary() {
                             </button>
                           </>
                         ) : s.status === 'Approved' ? (
-                          <button 
+                          <button
                             onClick={() => handlePay(s.id)}
                             className="w-10 h-10 flex items-center justify-center bg-indigo-500 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-600 rounded-xl transition-all"
                             title="Release Payment"
@@ -653,7 +652,7 @@ export default function Salary() {
                             <CreditCard size={18} />
                           </button>
                         ) : (
-                          <button 
+                          <button
                             onClick={() => generatePayslip(s)}
                             className="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:text-indigo-600 hover:bg-white hover:shadow-md rounded-xl transition-all"
                             title="Generate PDF"
@@ -662,14 +661,14 @@ export default function Salary() {
                           </button>
                         )}
                         {/* Email functionality removed */}
-                        <button 
-                          onClick={() => {setEditRecord(s); setShowEditModal(true);}}
+                        <button
+                          onClick={() => { setEditRecord(s); setShowEditModal(true); }}
                           className="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:text-amber-600 hover:bg-white hover:shadow-md rounded-xl transition-all"
                           title="Adjust Figures"
                         >
                           <Edit size={18} />
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleDelete(s.id)}
                           className="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-white hover:shadow-md rounded-xl transition-all"
                           title="Delete Record"
@@ -710,56 +709,56 @@ export default function Salary() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Bonus</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20"
                 value={editRecord?.bonus}
-                onChange={(e) => setEditRecord({...editRecord, bonus: e.target.value})}
+                onChange={(e) => setEditRecord({ ...editRecord, bonus: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Overtime</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20"
                 value={editRecord?.overtime}
-                onChange={(e) => setEditRecord({...editRecord, overtime: e.target.value})}
+                onChange={(e) => setEditRecord({ ...editRecord, overtime: e.target.value })}
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Deduction</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20"
                 value={editRecord?.deduction}
-                onChange={(e) => setEditRecord({...editRecord, deduction: e.target.value})}
+                onChange={(e) => setEditRecord({ ...editRecord, deduction: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tax</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20"
                 value={editRecord?.tax}
-                onChange={(e) => setEditRecord({...editRecord, tax: e.target.value})}
+                onChange={(e) => setEditRecord({ ...editRecord, tax: e.target.value })}
               />
             </div>
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Adjustment Remarks</label>
-            <textarea 
+            <textarea
               className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 h-24 resize-none"
               placeholder="Reason for modification..."
               value={editRecord?.remarks || ""}
-              onChange={(e) => setEditRecord({...editRecord, remarks: e.target.value})}
+              onChange={(e) => setEditRecord({ ...editRecord, remarks: e.target.value })}
             ></textarea>
           </div>
           <div className="bg-indigo-600 p-6 rounded-2xl flex justify-between items-center text-white">
             <div>
               <p className="text-[10px] font-bold text-indigo-200 uppercase">Estimated Net</p>
-              <p className="text-2xl font-black">₹{(parseFloat(editRecord?.basic_salary||0) + parseFloat(editRecord?.bonus||0) + parseFloat(editRecord?.overtime||0) - parseFloat(editRecord?.deduction||0) - parseFloat(editRecord?.tax||0)).toLocaleString()}</p>
+              <p className="text-2xl font-black">₹{(parseFloat(editRecord?.basic_salary || 0) + parseFloat(editRecord?.bonus || 0) + parseFloat(editRecord?.overtime || 0) - parseFloat(editRecord?.deduction || 0) - parseFloat(editRecord?.tax || 0)).toLocaleString()}</p>
             </div>
             <button type="submit" className="bg-white text-indigo-600 px-6 py-2 rounded-xl font-black text-sm hover:bg-indigo-50 transition-all">
               Save Changes
@@ -779,7 +778,7 @@ export default function Salary() {
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Rejection Remarks</label>
-            <textarea 
+            <textarea
               className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-rose-500/5 transition-all h-32 resize-none"
               placeholder="Reason for rejection..."
               value={remarks}
@@ -787,13 +786,13 @@ export default function Salary() {
             ></textarea>
           </div>
           <div className="flex gap-3 pt-4">
-            <button 
+            <button
               onClick={() => setShowRejectModal(false)}
               className="flex-1 px-6 py-3.5 bg-slate-50 text-slate-500 rounded-2xl font-bold hover:bg-slate-100 transition-all"
             >
               Cancel
             </button>
-            <button 
+            <button
               onClick={handleReject}
               className="flex-1 px-6 py-3.5 bg-rose-600 text-white rounded-2xl font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200"
             >
@@ -810,7 +809,7 @@ const Modal = ({ children, isOpen, onClose, title }) => (
   <AnimatePresence>
     {isOpen && (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
-        <motion.div 
+        <motion.div
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
