@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
+import API_URL from "../apiConfig";
 import { 
   Users, Search, Filter, Edit, Trash2, 
   Download, Building2, UserPlus, Briefcase, IndianRupee,
@@ -223,9 +224,17 @@ export default function Employees() {
                     >
                       <td className="px-10 py-8">
                         <div className="flex items-center gap-6">
-                          <div className="relative group">
-                            <div className="w-16 h-16 rounded-[1.75rem] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-black text-white text-xl shadow-xl shadow-indigo-100 group-hover:scale-110 transition-transform duration-500">
-                              {emp.name.charAt(0).toUpperCase()}
+                          <div className="relative group/avatar">
+                            <div className="w-16 h-16 rounded-[1.75rem] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-black text-white text-xl shadow-xl shadow-indigo-100 group-hover:scale-110 transition-transform duration-500 overflow-hidden">
+                              {emp.profile_photo ? (
+                                <img
+                                  src={`${API_URL}${emp.profile_photo}`}
+                                  alt={emp.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                emp.name.charAt(0).toUpperCase()
+                              )}
                             </div>
                             <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-4 border-white rounded-full shadow-lg"></div>
                           </div>
