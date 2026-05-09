@@ -7,12 +7,14 @@ import {
   Info, Activity, CreditCard
 } from "lucide-react";
 import {
-  AreaChart, Area, ResponsiveContainer,
+  AreaChart, Area, ResponsiveContainer, XAxis,
   Cell, PieChart, Pie
 } from "recharts";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import LiveClock from "../components/LiveClock";
+
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 export default function EmployeeDashboard() {
   const [stats, setStats] = useState({
@@ -25,6 +27,7 @@ export default function EmployeeDashboard() {
     leaveBalance: 0,
     name: ''
   });
+  const [salaryChartData, setSalaryChartData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [checkedIn, setCheckedIn] = useState(false);
   const [checkedOut, setCheckedOut] = useState(false);
@@ -35,23 +38,44 @@ export default function EmployeeDashboard() {
     const fetchStats = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/dashboard`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setStats(res.data);
+        const BASE = window.location.hostname === 'localhost'
+          ? 'http://localhost:5000'
+          : 'https://salary-management-64wa.onrender.com';
+        const headers = { Authorization: `Bearer ${token}` };
+
+        const [dashRes, salaryRes, attRes] = await Promise.all([
+          axios.get(`${BASE}/api/employee-portal/dashboard`, { headers }),
+          axios.get(`${BASE}/api/employee-portal/salary`, { headers }),
+          axios.get(`${BASE}/api/employee-portal/attendance`, { headers }),
+        ]);
+
+        setStats(dashRes.data);
+
+        // Build chart data from real salary history (last 6 months, oldest → newest)
+        const paidSalaries = salaryRes.data
+          .filter(s => s.status === 'Paid' || s.status === 'Approved')
+          .sort((a, b) => a.year !== b.year ? a.year - b.year : a.month - b.month)
+          .slice(-6)
+          .map(s => ({
+            name: `${MONTH_NAMES[parseInt(s.month) - 1]} ${s.year}`,
+            value: Number(s.net_salary) || 0,
+          }));
+
+        // If no salary records yet, show a flat zero baseline so the chart still renders
+        setSalaryChartData(
+          paidSalaries.length > 0
+            ? paidSalaries
+            : [{ name: 'No Data', value: 0 }]
+        );
+
         setLoading(false);
-        const attRes = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/attendance`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
 
         const today = new Date();
         const todayStr = today.toISOString().split('T')[0];
-        
         const todayLog = attRes.data.find(log => {
           const logDate = new Date(log.date).toISOString().split('T')[0];
           return logDate === todayStr;
         });
-        
         if (todayLog) {
           if (todayLog.status === 'Leave' || todayLog.status === 'Half Day') {
             setOnLeave(true);
@@ -200,17 +224,29 @@ export default function EmployeeDashboard() {
           
           <div className="flex-1 mt-4 relative z-10">
             <ResponsiveContainer width="100%" height={140}>
-              <AreaChart data={[
-                {name: 'Mon', value: 400}, {name: 'Tue', value: 300}, {name: 'Wed', value: 600}, 
-                {name: 'Thu', value: 800}, {name: 'Fri', value: stats.currentNetSalary}
-              ]}>
+              <AreaChart data={salaryChartData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
                     <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <Area type="monotone" dataKey="value" stroke="#10B981" fillOpacity={1} fill="url(#colorVal)" strokeWidth={3} />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 700 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#10B981"
+                  fillOpacity={1}
+                  fill="url(#colorVal)"
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: '#10B981', strokeWidth: 2, stroke: '#fff' }}
+                  activeDot={{ r: 6, fill: '#10B981', stroke: '#fff', strokeWidth: 2 }}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>

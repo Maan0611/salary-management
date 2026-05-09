@@ -1,145 +1,142 @@
--- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
---
--- Host: localhost    Database: salary_management
--- ------------------------------------------------------
--- Server version	8.0.45
+SET FOREIGN_KEY_CHECKS = 0;
+USE railway;
+DROP TABLE IF EXISTS attendance;
+DROP TABLE IF EXISTS salary;
+DROP TABLE IF EXISTS salaries;
+DROP TABLE IF EXISTS requests;
+DROP TABLE IF EXISTS announcements;
+DROP TABLE IF EXISTS announcement_reads;
+DROP TABLE IF EXISTS notifications;
+DROP TABLE IF EXISTS employees;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS admin;
+DROP TABLE IF EXISTS admins;
+SET FOREIGN_KEY_CHECKS = 0;
+USE railway;
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  phone VARCHAR(20),
+  address TEXT,
+  role ENUM('admin', 'employee') DEFAULT 'admin',
+  profile_image VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+-- Employees Table
+CREATE TABLE employees (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  emp_id VARCHAR(50) UNIQUE NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  department VARCHAR(100),
+  position VARCHAR(100),
+  basic_salary DECIMAL(10,2),
+  join_date DATE,
+  leave_balance INT DEFAULT 12,
+  status ENUM('Active', 'Inactive', 'Terminated') DEFAULT 'Active',
+  phone VARCHAR(20),
+  address TEXT,
+  emergency_contact VARCHAR(100),
+  profile_photo VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
---
--- Table structure for table `attendance`
---
+-- Attendance Table
+CREATE TABLE attendance (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  emp_id INT NOT NULL,
+  date DATE NOT NULL,
+  status ENUM('Present', 'Absent', 'Late', 'Half Day') DEFAULT 'Present',
+  check_in VARCHAR(20),
+  check_out VARCHAR(20),
+  notes TEXT,
+  FOREIGN KEY (emp_id) REFERENCES employees(id) ON DELETE CASCADE
+);
 
-DROP TABLE IF EXISTS `attendance`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `attendance` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `emp_id` int NOT NULL,
-  `date` date NOT NULL,
-  `status` enum('Present','Absent','Late','Half Day','Leave') DEFAULT 'Present',
-  `check_in` varchar(20) DEFAULT NULL,
-  `check_out` varchar(20) DEFAULT NULL,
-  `notes` text,
-  PRIMARY KEY (`id`),
-  KEY `emp_id` (`emp_id`),
-  CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`emp_id`) REFERENCES `employees` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- Salary Table
+CREATE TABLE salary (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  employee_id INT NOT NULL,
+  month VARCHAR(20) NOT NULL,
+  year INT NOT NULL,
+  basic_salary DECIMAL(10,2) NOT NULL,
+  bonus DECIMAL(10,2) DEFAULT 0,
+  overtime DECIMAL(10,2) DEFAULT 0,
+  deduction DECIMAL(10,2) DEFAULT 0,
+  tax DECIMAL(10,2) DEFAULT 0,
+  net_salary DECIMAL(10,2) NOT NULL,
+  status ENUM('Draft', 'Approved', 'Rejected', 'Paid') DEFAULT 'Draft',
+  approved_by INT,
+  approved_at TIMESTAMP NULL,
+  payment_date DATE,
+  remarks TEXT,
+  is_modified BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+);
 
---
--- Dumping data for table `attendance`
---
+-- Requests Table
+CREATE TABLE requests (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  employee_id INT NOT NULL,
+  request_type ENUM('Leave Request', 'Half Day', 'Work From Home', 'Salary Advance', 'Profile Update', 'Casual Leave', 'Sick Leave', 'Emergency Leave', 'Maternity/Paternity') NOT NULL,
+  reason TEXT,
+  from_date DATE,
+  to_date DATE,
+  amount DECIMAL(10,2) DEFAULT NULL,
+  status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+  admin_remark TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+);
 
-LOCK TABLES `attendance` WRITE;
-/*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
-/*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
-UNLOCK TABLES;
+-- Announcements Table
+CREATE TABLE announcements (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL,
+  priority ENUM('Normal', 'Important', 'Urgent') DEFAULT 'Normal',
+  target_type ENUM('All Employees', 'Department Wise', 'Specific Employee') DEFAULT 'All Employees',
+  target_id VARCHAR(255) DEFAULT NULL,
+  publish_date DATE,
+  expiry_date DATE,
+  attachment VARCHAR(255) DEFAULT NULL,
+  status ENUM('Published', 'Draft', 'Expired') DEFAULT 'Published',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
---
--- Table structure for table `employees`
---
+-- Announcement Reads Table
+CREATE TABLE announcement_reads (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  announcement_id INT NOT NULL,
+  employee_id INT NOT NULL,
+  is_read BOOLEAN DEFAULT FALSE,
+  read_at TIMESTAMP NULL DEFAULT NULL,
+  FOREIGN KEY (announcement_id) REFERENCES announcements(id) ON DELETE CASCADE,
+  FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+);
 
-DROP TABLE IF EXISTS `employees`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `employees` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int DEFAULT NULL,
-  `department` varchar(100) DEFAULT NULL,
-  `designation` varchar(100) DEFAULT NULL,
-  `basic_salary` decimal(10,2) DEFAULT NULL,
-  `join_date` date DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- Notifications Table
+CREATE TABLE notifications (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  message TEXT,
+  type ENUM('info', 'success', 'warning', 'danger') DEFAULT 'info',
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
---
--- Dumping data for table `employees`
---
+-- Insert Default Admin User
+INSERT INTO users (name,email, password)
+VALUES ('admin','admin@gmail.com','123456');
 
-LOCK TABLES `employees` WRITE;
-/*!40000 ALTER TABLE `employees` DISABLE KEYS */;
-/*!40000 ALTER TABLE `employees` ENABLE KEYS */;
-UNLOCK TABLES;
 
---
--- Table structure for table `salaries`
---
 
-DROP TABLE IF EXISTS `salaries`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `salaries` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `employee_id` int DEFAULT NULL,
-  `month` varchar(20) DEFAULT NULL,
-  `year` int DEFAULT NULL,
-  `basic` decimal(10,2) DEFAULT NULL,
-  `bonus` decimal(10,2) DEFAULT NULL,
-  `deduction` decimal(10,2) DEFAULT NULL,
-  `net_salary` decimal(10,2) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `employee_id` (`employee_id`),
-  CONSTRAINT `salaries_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `salaries`
---
-
-LOCK TABLES `salaries` WRITE;
-/*!40000 ALTER TABLE `salaries` DISABLE KEYS */;
-/*!40000 ALTER TABLE `salaries` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `role` enum('admin','employee') DEFAULT 'employee',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `users`
---
-
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Admin','admin@gmail.com','123456','admin');
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2026-05-05 16:35:06
+SET FOREIGN_KEY_CHECKS = 1;
