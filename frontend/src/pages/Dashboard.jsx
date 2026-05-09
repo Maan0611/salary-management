@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../apiConfig";
 import Layout from "../components/Layout";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -80,9 +81,9 @@ export default function Dashboard() {
         const headers = { Authorization: `Bearer ${token}` };
 
         const [statsRes, empRes, reqRes] = await Promise.all([
-          axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/dashboard/stats`, { headers }),
-          axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employees`, { headers }),
-          axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/requests/admin/all`, { headers })
+          axios.get(`${API_URL}/api/dashboard/stats`, { headers }),
+          axios.get(`${API_URL}/api/employees`, { headers }),
+          axios.get(`${API_URL}/api/requests/admin/all`, { headers })
         ]);
 
         const allReqs = reqRes.data || [];
@@ -118,13 +119,13 @@ export default function Dashboard() {
   const handleRequestAction = async (id, action) => {
     try {
       const token = sessionStorage.getItem("token");
-      const url = `${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/requests/admin/${id}/${action.toLowerCase()}`;
+      const url = `${API_URL}/api/requests/admin/${id}/${action.toLowerCase()}`;
       await axios.put(url, { admin_remark: "Approved via dashboard" }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Refresh data
-      const statsRes = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/dashboard/stats`, { headers: { Authorization: `Bearer ${token}` } });
-      const reqRes = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/requests/admin/all`, { headers: { Authorization: `Bearer ${token}` } });
+      const statsRes = await axios.get(`${API_URL}/api/dashboard/stats`, { headers: { Authorization: `Bearer ${token}` } });
+      const reqRes = await axios.get(`${API_URL}/api/requests/admin/all`, { headers: { Authorization: `Bearer ${token}` } });
       
       const allReqs = reqRes.data || [];
       const pendingReqs = allReqs.filter(r => r.status === 'Pending');

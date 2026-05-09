@@ -189,7 +189,7 @@ export default function Salary() {
   const stats = useMemo(() => {
     const total = filteredRecords.reduce((acc, curr) => acc + parseFloat(curr.net_salary), 0);
     const paid = filteredRecords.filter(s => s.status === "Paid").length;
-    const pending = filteredRecords.filter(s => s.status === "Draft" || s.status === "Rejected").length;
+    const pending = filteredRecords.filter(s => s.status !== "Paid").length;
     const totalBonus = filteredRecords.reduce((acc, curr) => acc + parseFloat(curr.bonus), 0);
     return { total, paid, pending, totalBonus };
   }, [filteredRecords]);

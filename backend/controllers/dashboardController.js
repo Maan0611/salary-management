@@ -50,7 +50,7 @@ exports.getStats = async (req, res) => {
 
     // 5. Pending Salaries (Records with 'Pending' status)
     const [pendingSalaries] = await db.promise().query(
-      "SELECT COUNT(*) as count FROM salary WHERE month = ? AND year = ? AND status = 'Pending'",
+      "SELECT COUNT(*) as count FROM salary WHERE month = ? AND year = ? AND status != 'Paid'",
       [currentMonthNum, currentYear]
     );
     stats.pendingSalaries = pendingSalaries[0].count;
