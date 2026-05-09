@@ -56,7 +56,7 @@ exports.uploadPhoto = (req, res) => {
   const userId = req.user.id;
   if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
-  const imageUrl = `/uploads/${req.file.filename}`;
+  const imageUrl = `/uploads/profiles/${req.file.filename}`;
 
   db.query("UPDATE users SET profile_image=? WHERE id=?", [imageUrl, userId], (err, result) => {
     if (err) return res.status(500).json({ message: "Failed to save image" });

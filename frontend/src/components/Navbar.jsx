@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import API_URL from "../apiConfig";
 import { 
   LogOut, User, Settings, 
   Menu, Sparkles, X
@@ -7,9 +9,29 @@ import {
 
 export default function Navbar({ toggleSidebar, isSidebarOpen }) {
   const navigate = useNavigate();
+  const [profile, setProfile] = useState(null);
+
+  const fetchProfile = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const res = await axios.get(`${API_URL}/api/admin/profile`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setProfile(res.data);
+    } catch (err) {
+      console.error("Navbar profile fetch failed", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+    window.addEventListener('profileUpdate', fetchProfile);
+    return () => window.removeEventListener('profileUpdate', fetchProfile);
+  }, []);
 
   const logout = () => {
     sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
     navigate("/");
   };
 
@@ -37,13 +59,17 @@ export default function Navbar({ toggleSidebar, isSidebarOpen }) {
           <div className="flex items-center gap-4 border-l border-slate-100 pl-4">
             <Link to="/profile" className="flex items-center gap-3 p-1.5 pr-2 md:pr-4 hover:bg-slate-50 rounded-2xl transition-all group">
               <div className="relative">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-indigo-100 border border-white group-hover:scale-105 transition-transform">
-                  A
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-indigo-100 border border-white group-hover:scale-105 transition-transform overflow-hidden">
+                  {profile?.profile_image ? (
+                    <img src={`${API_URL}${profile.profile_image}`} alt="A" className="w-full h-full object-cover" />
+                  ) : (
+                    profile?.name?.charAt(0).toUpperCase() || 'A'
+                  )}
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
               </div>
               <div className="hidden md:block text-left">
-                <p className="text-xs font-black text-slate-800 uppercase tracking-wider">Administrator</p>
+                <p className="text-xs font-black text-slate-800 uppercase tracking-wider">{profile?.name || "Administrator"}</p>
                 <p className="text-[10px] font-bold text-slate-400">System Control</p>
               </div>
             </Link>
