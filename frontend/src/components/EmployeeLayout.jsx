@@ -91,7 +91,15 @@ export default function EmployeeLayout({ children }) {
               </div>
               <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center text-indigo-600 shadow-inner overflow-hidden border border-white group-hover:ring-2 group-hover:ring-indigo-100 transition-all">
                 {profile?.profile_photo ? (
-                  <img src={`${API_URL}${profile.profile_photo}`} alt="P" className="w-full h-full object-cover" />
+                  <img 
+                    src={`${API_URL}${profile.profile_photo}`} 
+                    alt="P" 
+                    className="w-full h-full object-cover" 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      setProfile(prev => ({...prev, profile_photo: null}));
+                    }}
+                  />
                 ) : (
                   <User size={20} />
                 )}

@@ -133,7 +133,15 @@ export default function EmployeeProfile() {
             <div className="w-32 h-32 rounded-3xl bg-white p-1 mx-auto shadow-xl group relative cursor-pointer overflow-hidden">
               <div className="w-full h-full rounded-[20px] bg-indigo-50 flex items-center justify-center text-indigo-600 border-4 border-white overflow-hidden">
                 {previewUrl ? (
-                  <img src={previewUrl} alt="Profile" className="w-full h-full object-cover" />
+                  <img 
+                    src={previewUrl} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover" 
+                    onError={(e) => {
+                      e.target.onerror = null; 
+                      setPreviewUrl(null);
+                    }}
+                  />
                 ) : (
                   <User size={64} strokeWidth={1.5} />
                 )}

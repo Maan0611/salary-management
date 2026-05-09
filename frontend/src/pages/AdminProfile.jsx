@@ -102,7 +102,15 @@ export default function AdminProfile() {
           <div className="md:w-1/3 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center">
             <div className="w-32 h-32 rounded-full bg-gray-200 overflow-hidden mb-4 border-4 border-white shadow-lg">
               {profile.profile_image ? (
-                <img src={`${API_URL}${profile.profile_image}`} alt="Profile" className="w-full h-full object-cover" />
+                <img 
+                  src={`${API_URL}${profile.profile_image}`} 
+                  alt="Profile" 
+                  className="w-full h-full object-cover" 
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    setProfile(prev => ({...prev, profile_image: null}));
+                  }}
+                />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-4xl">
                   {profile.name ? profile.name.charAt(0).toUpperCase() : "A"}

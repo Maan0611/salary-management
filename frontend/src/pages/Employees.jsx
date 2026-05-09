@@ -24,7 +24,7 @@ export default function Employees() {
     try {
       setLoading(true);
       const token = sessionStorage.getItem("token");
-      const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employees`, {
+      const res = await axios.get(`${API_URL}/api/employees`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEmployees(res.data);
@@ -43,7 +43,7 @@ export default function Employees() {
     if (!window.confirm("Permanently remove this employee from the records?")) return;
     try {
       const token = sessionStorage.getItem("token");
-      await axios.delete(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employees/${id}`, {
+      await axios.delete(`${API_URL}/api/employees/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       loadEmployees();
@@ -231,6 +231,10 @@ export default function Employees() {
                                   src={`${API_URL}${emp.profile_photo}`}
                                   alt={emp.name}
                                   className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    setEmployees(prev => prev.map(item => item.id === emp.id ? {...item, profile_photo: null} : item));
+                                  }}
                                 />
                               ) : (
                                 emp.name.charAt(0).toUpperCase()

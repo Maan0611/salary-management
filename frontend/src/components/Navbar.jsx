@@ -61,7 +61,15 @@ export default function Navbar({ toggleSidebar, isSidebarOpen }) {
               <div className="relative">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-indigo-100 border border-white group-hover:scale-105 transition-transform overflow-hidden">
                   {profile?.profile_image ? (
-                    <img src={`${API_URL}${profile.profile_image}`} alt="A" className="w-full h-full object-cover" />
+                    <img 
+                      src={`${API_URL}${profile.profile_image}`} 
+                      alt="A" 
+                      className="w-full h-full object-cover" 
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        setProfile(prev => ({...prev, profile_image: null}));
+                      }}
+                    />
                   ) : (
                     profile?.name?.charAt(0).toUpperCase() || 'A'
                   )}

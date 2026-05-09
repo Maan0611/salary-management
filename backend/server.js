@@ -24,9 +24,21 @@ const requestRoutes = require("./routes/requestRoutes");
 const announcementRoutes = require("./routes/announcementRoutes");
 
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/uploads/profiles", express.static(path.join(__dirname, "uploads/profiles")));
-app.use("/uploads/announcements", express.static(path.join(__dirname, "uploads/announcements")));
+const fs = require('fs');
+
+// Ensure upload directories exist using absolute paths
+const uploadsRoot = path.join(__dirname, "uploads");
+const profileUploads = path.join(uploadsRoot, "profiles");
+const announcementUploads = path.join(uploadsRoot, "announcements");
+
+[uploadsRoot, profileUploads, announcementUploads].forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+    console.log(`Created directory: ${dir}`);
+  }
+});
+
+app.use("/uploads", express.static(uploadsRoot));
 
 app.use("/api/employees", employeeRoutes);
 app.use("/api/auth", authRoutes);
