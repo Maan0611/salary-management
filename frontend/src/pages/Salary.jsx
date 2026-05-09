@@ -388,7 +388,6 @@ export default function Salary() {
                 <div className={`p-3 rounded-xl bg-${card.color}-500/10 text-${card.color}-600`}>
                   <card.icon size={24} strokeWidth={2.5} />
                 </div>
-                <MoreVertical size={16} className="text-slate-300 cursor-pointer" />
               </div>
               <div>
                 <p className="text-slate-500 font-bold text-[10px] uppercase tracking-widest">{card.label}</p>
