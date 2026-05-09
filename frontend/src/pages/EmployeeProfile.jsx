@@ -74,6 +74,23 @@ export default function EmployeeProfile() {
     }
   };
 
+  const handleRemovePhoto = async () => {
+    if (!window.confirm("Are you sure you want to remove your profile photo?")) return;
+    try {
+      const token = sessionStorage.getItem("token");
+      await axios.delete(`${API_URL}/api/employee-portal/profile/remove-photo`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPreviewUrl(null);
+      setSelectedFile(null);
+      fetchProfile();
+      window.dispatchEvent(new Event('profileUpdate'));
+      alert("Photo removed!");
+    } catch (err) {
+      alert("Failed to remove photo");
+    }
+  };
+
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     try {
@@ -133,6 +150,15 @@ export default function EmployeeProfile() {
                 className="mt-4 px-4 py-2 bg-emerald-600 text-white text-xs font-black rounded-lg hover:bg-emerald-700 transition"
               >
                 Save New Photo
+              </button>
+            )}
+
+            {previewUrl && !selectedFile && (
+              <button 
+                onClick={handleRemovePhoto}
+                className="mt-3 px-4 py-2 bg-rose-50 text-rose-600 text-xs font-black rounded-lg hover:bg-rose-100 border border-rose-100 transition flex items-center gap-2 mx-auto"
+              >
+                Remove Photo
               </button>
             )}
 

@@ -63,3 +63,19 @@ exports.uploadPhoto = (req, res) => {
     res.json({ message: "Profile photo updated", profile_image: imageUrl });
   });
 };
+
+exports.removePhoto = (req, res) => {
+  const userId = req.user.id;
+  db.query("SELECT profile_image FROM users WHERE id = ?", [userId], (err, result) => {
+    if (err || result.length === 0) return res.status(500).json({ message: "Database error" });
+    const oldPhoto = result[0].profile_image;
+    db.query("UPDATE users SET profile_image = NULL WHERE id = ?", [userId], (err2) => {
+      if (err2) return res.status(500).json({ message: "Failed to remove photo" });
+      if (oldPhoto) {
+        const filePath = require('path').join(__dirname, '..', oldPhoto);
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      }
+      res.json({ message: "Photo removed successfully" });
+    });
+  });
+};

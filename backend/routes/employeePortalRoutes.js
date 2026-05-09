@@ -31,6 +31,7 @@ router.post("/leaves", employeePortalController.applyLeave);
 router.get("/profile", employeePortalController.getProfile);
 router.put("/profile", employeePortalController.updateProfile);
 router.post("/profile/upload-photo", upload.single("photo"), employeePortalController.uploadPhoto);
+router.delete("/profile/remove-photo", employeePortalController.removePhoto);
 router.get("/notifications", employeePortalController.getNotifications);
 router.put("/notifications/:id/read", employeePortalController.markNotificationRead);
 router.put("/change-password", employeePortalController.changePassword);

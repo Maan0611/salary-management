@@ -29,5 +29,6 @@ router.get("/profile", adminController.getProfile);
 router.put("/profile", adminController.updateProfile);
 router.put("/change-password", adminController.changePassword);
 router.post("/upload-photo", upload.single('profileImage'), adminController.uploadPhoto);
+router.delete("/remove-photo", adminController.removePhoto);
 
 module.exports = router;

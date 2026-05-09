@@ -73,6 +73,19 @@ export default function AdminProfile() {
     }
   };
 
+  const handleRemovePhoto = async () => {
+    if (!window.confirm("Are you sure you want to remove your profile photo?")) return;
+    try {
+      const token = sessionStorage.getItem("token");
+      await axios.delete(`${API_URL}/api/admin/remove-photo`, { headers: { Authorization: `Bearer ${token}` } });
+      setMessage({ type: "success", text: "Photo removed successfully!" });
+      window.dispatchEvent(new Event('profileUpdate'));
+      loadProfile();
+    } catch (err) {
+      setMessage({ type: "error", text: "Failed to remove photo." });
+    }
+  };
+
   return (
     <Layout>
       <div className="max-w-4xl mx-auto">
@@ -103,6 +116,14 @@ export default function AdminProfile() {
               <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} className="text-sm w-full file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
               <button type="submit" className="w-full bg-gray-100 text-gray-700 py-1.5 rounded-lg text-sm font-semibold hover:bg-gray-200 transition">Upload Photo</button>
             </form>
+            {profile.profile_image && (
+              <button
+                onClick={handleRemovePhoto}
+                className="mt-2 w-full bg-rose-50 text-rose-600 py-1.5 rounded-lg text-sm font-semibold hover:bg-rose-100 border border-rose-100 transition"
+              >
+                Remove Photo
+              </button>
+            )}
           </div>
 
           {/* Right Column: Tabs & Forms */}

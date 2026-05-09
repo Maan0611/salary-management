@@ -111,6 +111,24 @@ exports.uploadPhoto = (req, res) => {
     });
 };
 
+exports.removePhoto = (req, res) => {
+    const employeeId = req.user.id;
+    db.query("SELECT profile_photo FROM employees WHERE id = ?", [employeeId], (err, result) => {
+        if (err || result.length === 0) return res.status(500).json({ message: "Database error" });
+        const oldPhoto = result[0].profile_photo;
+        db.query("UPDATE employees SET profile_photo = NULL WHERE id = ?", [employeeId], (err2) => {
+            if (err2) return res.status(500).json({ message: "Failed to remove photo" });
+            if (oldPhoto) {
+                const fs = require('fs');
+                const path = require('path');
+                const filePath = path.join(__dirname, '..', oldPhoto);
+                if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+            }
+            res.json({ message: "Photo removed successfully" });
+        });
+    });
+};
+
 // NOTIFICATIONS
 exports.getNotifications = (req, res) => {
     const employeeId = req.user.id;
