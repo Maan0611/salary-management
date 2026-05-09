@@ -24,6 +24,17 @@ exports.getStats = async (req, res) => {
     stats.presentToday = attendance.find(a => a.status === 'Present')?.count || 0;
     stats.absentToday = attendance.find(a => a.status === 'Absent')?.count || 0;
 
+    // 2b. Employees on Leave Today (Approved requests where today is within range)
+    const [onLeave] = await db.promise().query(`
+      SELECT e.name, e.department, r.request_type as type 
+      FROM requests r
+      JOIN employees e ON r.employee_id = e.id
+      WHERE r.status = 'Approved' 
+      AND CURDATE() BETWEEN r.from_date AND r.to_date
+    `);
+    stats.onLeaveToday = onLeave.length;
+    stats.employeesOnLeave = onLeave;
+
     // 3. Total Departments
     const [deptCount] = await db.promise().query("SELECT COUNT(DISTINCT department) as count FROM employees");
     stats.totalDepartments = deptCount[0].count;

@@ -58,6 +58,8 @@ export default function Dashboard() {
     monthlySalaryExpense: 0,
     pendingSalaries: 0,
     pendingRequests: 0,
+    onLeaveToday: 0,
+    employeesOnLeave: [],
     monthlySalaryTrend: [],
     departmentWise: [],
     announcements: [],
@@ -109,8 +111,9 @@ export default function Dashboard() {
 
   const attendancePieData = useMemo(() => [
     { name: 'Present', value: stats.presentToday || 0, color: '#10b981' },
-    { name: 'Absent', value: stats.absentToday || 0, color: '#ef4444' }
-  ], [stats.presentToday, stats.absentToday]);
+    { name: 'Absent', value: stats.absentToday || 0, color: '#ef4444' },
+    { name: 'On Leave', value: stats.onLeaveToday || 0, color: '#f59e0b' }
+  ], [stats.presentToday, stats.absentToday, stats.onLeaveToday]);
 
   const handleRequestAction = async (id, action) => {
     try {
@@ -205,10 +208,11 @@ export default function Dashboard() {
         </div>
 
         {/* Primary Stats Grid - 6 Cards in one row */}
-        <div className="grid grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
           <StatCard title="Total Staff" value={stats.totalEmployees} icon={Users} color="indigo" />
           <StatCard title="Present Today" value={stats.presentToday} icon={UserCheck} color="emerald" />
           <StatCard title="Absent Today" value={stats.absentToday} icon={UserMinus} color="rose" />
+          <StatCard title="Staff on Leave" value={stats.onLeaveToday} icon={Calendar} color="amber" />
           <StatCard title="Monthly Budget" value={stats.monthlySalaryExpense} icon={IndianRupee} color="purple" />
           <StatCard title="Pending Payouts" value={stats.pendingSalaries} icon={Clock} color="amber" />
           <StatCard title="Open Requests" value={stats.pendingRequests} icon={ClipboardList} color="orange" />
@@ -282,6 +286,10 @@ export default function Dashboard() {
                     <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest block mb-1">Present</span>
                     <span className="text-xl font-black text-emerald-800">{stats.presentToday}</span>
                  </div>
+                 <div className="flex-1 p-4 bg-amber-50 rounded-2xl border border-amber-100/50">
+                    <span className="text-[9px] font-black text-amber-600 uppercase tracking-widest block mb-1">Leave</span>
+                    <span className="text-xl font-black text-amber-800">{stats.onLeaveToday}</span>
+                 </div>
                  <div className="flex-1 p-4 bg-rose-50 rounded-2xl border border-rose-100/50">
                     <span className="text-[9px] font-black text-rose-600 uppercase tracking-widest block mb-1">Absent</span>
                     <span className="text-xl font-black text-rose-800">{stats.absentToday}</span>
@@ -289,24 +297,31 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Quick Summary Small List */}
+            {/* Employees on Leave Detail */}
             <div className="glass-card rounded-[3rem] p-8">
-              <h3 className="text-xl font-black text-text-main uppercase tracking-tight mb-6">Resource Hub</h3>
-              <div className="space-y-4">
-                <Link to="/employees" className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl hover:bg-indigo-50 transition-all group">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-indigo-600 shadow-sm group-hover:scale-110 transition-transform"><Briefcase size={18} /></div>
-                    <span className="text-sm font-bold text-slate-700">Staff Directory</span>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-black text-text-main uppercase tracking-tight">On Leave Today</h3>
+                <span className="px-3 py-1 bg-amber-100 text-amber-700 text-[10px] font-black rounded-full uppercase">{stats.onLeaveToday} Active</span>
+              </div>
+              <div className="space-y-4 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
+                {stats.employeesOnLeave && stats.employeesOnLeave.length > 0 ? (
+                  stats.employeesOnLeave.map((emp, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-transparent hover:border-amber-100 hover:bg-amber-50/30 transition-all group">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-amber-600 shadow-sm font-black text-sm">{emp.name.charAt(0)}</div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-700">{emp.name}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{emp.department}</p>
+                        </div>
+                      </div>
+                      <span className="text-[9px] font-black text-amber-600 bg-amber-100/50 px-2 py-1 rounded-lg uppercase">{emp.type}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-10">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No employees on leave today</p>
                   </div>
-                  <ChevronRight size={16} className="text-slate-300 group-hover:text-indigo-600 transition-all" />
-                </Link>
-                <Link to="/announcements" className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl hover:bg-purple-50 transition-all group">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-purple-600 shadow-sm group-hover:scale-110 transition-transform"><Bell size={18} /></div>
-                    <span className="text-sm font-bold text-slate-700">Notice Portal</span>
-                  </div>
-                  <ChevronRight size={16} className="text-slate-300 group-hover:text-purple-600 transition-all" />
-                </Link>
+                )}
               </div>
             </div>
           </div>
