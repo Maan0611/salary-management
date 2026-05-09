@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import API_URL from "../apiConfig";
 import { 
   IndianRupee, FileText, Download, Calendar, 
   TrendingUp, TrendingDown, Briefcase, User
