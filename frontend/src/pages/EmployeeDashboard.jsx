@@ -194,7 +194,10 @@ export default function EmployeeDashboard() {
           </div>
 
           <div className="w-full lg:w-auto">
-            <LiveClock />
+            <LiveClock 
+              className="flex flex-col items-start lg:items-end gap-3 text-left lg:text-right"
+              containerClass="bg-white/10 backdrop-blur-md p-4 md:p-6 rounded-3xl border border-white/10" 
+            />
           </div>
         </div>
         
