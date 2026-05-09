@@ -28,6 +28,8 @@ export default function EmployeeDashboard() {
   const [loading, setLoading] = useState(true);
   const [checkedIn, setCheckedIn] = useState(false);
   const [checkedOut, setCheckedOut] = useState(false);
+  const [onLeave, setOnLeave] = useState(false);
+  const [leaveType, setLeaveType] = useState('');
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -44,18 +46,20 @@ export default function EmployeeDashboard() {
 
         const today = new Date();
         const todayStr = today.toISOString().split('T')[0];
-        console.log("Current Date (UTC):", todayStr);
         
         const todayLog = attRes.data.find(log => {
           const logDate = new Date(log.date).toISOString().split('T')[0];
           return logDate === todayStr;
         });
         
-        console.log("Today's Log:", todayLog);
-        
         if (todayLog) {
-          setCheckedIn(true);
-          setCheckedOut(!!todayLog.check_out);
+          if (todayLog.status === 'Leave' || todayLog.status === 'Half Day') {
+            setOnLeave(true);
+            setLeaveType(todayLog.status);
+          } else {
+            setCheckedIn(true);
+            setCheckedOut(!!todayLog.check_out);
+          }
         }
       } catch (err) {
         console.error(err);
@@ -132,7 +136,12 @@ export default function EmployeeDashboard() {
               </p>
             
             <div className="flex flex-wrap items-center gap-4 mt-8">
-              {!checkedIn ? (
+              {onLeave ? (
+                <div className="bg-amber-500/20 backdrop-blur-md text-white px-6 md:px-8 py-3 md:py-3.5 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest flex items-center gap-3 border border-amber-500/30">
+                  <div className="w-2.5 h-2.5 bg-amber-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(251,191,36,0.8)]"></div>
+                  {leaveType} Today
+                </div>
+              ) : !checkedIn ? (
                 <button 
                   onClick={handleCheckIn}
                   className="group relative bg-white text-indigo-700 px-6 md:px-8 py-3 md:py-3.5 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 flex items-center gap-3"
