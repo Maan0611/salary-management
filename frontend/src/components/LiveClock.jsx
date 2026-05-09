@@ -9,14 +9,18 @@ export default function LiveClock({ className, containerClass }) {
   }, []);
 
   return (
-    <div className={className || "hidden md:flex flex-col items-end gap-3 text-right"}>
-      <div className={containerClass || "bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 shadow-inner"}>
-        <div className="text-4xl font-black tracking-tighter mb-1">
-          {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          <span className="text-xl opacity-60 ml-1 font-bold">{currentTime.toLocaleTimeString([], { second: '2-digit' })}</span>
+    <div className={className || "flex flex-col items-end"}>
+      <div className={containerClass || "bg-white/10 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/20 shadow-2xl flex flex-col items-center justify-center text-center"}>
+        <div className="flex items-center gap-1">
+          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-white drop-shadow-lg leading-none">
+            {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+          </h1>
+          <span className="text-xl md:text-2xl font-black text-white/40 self-end mb-1">
+            {currentTime.toLocaleTimeString('en-US', { second: '2-digit' })}
+          </span>
         </div>
-        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-200">
-          {currentTime.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+        <div className="mt-4 text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-white/70 drop-shadow-md">
+          {currentTime.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase()}
         </div>
       </div>
     </div>

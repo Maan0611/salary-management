@@ -196,10 +196,7 @@ export default function Dashboard() {
             </div>
 
             <div className="flex lg:flex flex-col items-start lg:items-end gap-4 text-left lg:text-right w-full lg:w-auto">
-              <LiveClock 
-                className="flex flex-col items-start lg:items-end gap-3"
-                containerClass="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] border border-white shadow-xl shadow-indigo-100/20 w-full sm:w-auto"
-              />
+              <LiveClock />
             </div>
           </div>
           
