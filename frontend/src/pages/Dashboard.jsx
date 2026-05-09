@@ -18,7 +18,6 @@ import { ArrowRight } from "lucide-react";
 import CountUp from 'react-countup';
 import { motion } from "framer-motion";
 import LiveClock from "../components/LiveClock";
-import AdminClock from "../components/AdminClock";
 
 const StatCard = ({ title, value, icon: Icon, color }) => {
   const getColors = (c) => {
@@ -197,7 +196,7 @@ export default function Dashboard() {
             </div>
 
             <div className="flex lg:flex flex-col items-start lg:items-end gap-4 text-left lg:text-right w-full lg:w-auto">
-            <AdminClock />
+              <LiveClock />
             </div>
           </div>
           
