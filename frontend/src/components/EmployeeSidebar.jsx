@@ -6,6 +6,8 @@ import {
   User, LogOut, ChevronLeft, ShieldCheck, Megaphone, X
 } from "lucide-react";
 
+import API_URL from "../apiConfig";
+
 export default function EmployeeSidebar({ isOpen, toggleSidebar }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ export default function EmployeeSidebar({ isOpen, toggleSidebar }) {
     const fetchUnread = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/announcements/employee/all`, {
+        const res = await axios.get(`${API_URL}/api/announcements/employee/all`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const unread = res.data.filter(ann => !ann.is_read).length;
@@ -55,11 +57,11 @@ export default function EmployeeSidebar({ isOpen, toggleSidebar }) {
 
   return (
     <div className={`
-      w-72 bg-white border-r border-slate-100 h-screen fixed lg:sticky top-0 z-40 flex flex-col p-6 shadow-sm transition-transform duration-300 transform
+      w-72 bg-white border-r border-slate-100 h-screen fixed top-0 left-0 z-40 flex flex-col p-6 shadow-sm transition-transform duration-300 transform
       ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
     `}>
       {/* Brand */}
-      <div className="flex items-center gap-3 px-2 mb-12">
+      <div className="flex items-center gap-3 px-2 mb-8">
         <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
           <Layout className="text-white" size={24} />
         </div>

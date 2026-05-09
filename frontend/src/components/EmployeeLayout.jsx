@@ -53,7 +53,7 @@ export default function EmployeeLayout({ children }) {
         ></div>
       )}
 
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 lg:pl-72">
         {/* Top Header */}
         <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-4 md:px-10 sticky top-0 z-20">
           <div className="flex items-center gap-4">
