@@ -6,6 +6,7 @@ import {
 import EmployeeSidebar from "./EmployeeSidebar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from "../apiConfig";
 
 export default function EmployeeLayout({ children }) {
   const [profile, setProfile] = React.useState(null);
@@ -19,7 +20,7 @@ export default function EmployeeLayout({ children }) {
     const fetchProfile = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/profile`, {
+        const res = await axios.get(`${API_URL}/api/employee-portal/profile`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProfile(res.data);
@@ -27,7 +28,10 @@ export default function EmployeeLayout({ children }) {
         console.error(err);
       }
     };
+
     fetchProfile();
+    window.addEventListener('profileUpdate', fetchProfile);
+    return () => window.removeEventListener('profileUpdate', fetchProfile);
   }, []);
 
   const handleLogout = () => {
@@ -77,14 +81,17 @@ export default function EmployeeLayout({ children }) {
               <LogOut size={20} />
             </button>
 
-            <div className="flex items-center gap-3 pl-3 md:pl-6 border-l border-slate-100">
+            <div 
+              onClick={() => navigate("/employee/profile")}
+              className="flex items-center gap-3 pl-3 md:pl-6 border-l border-slate-100 cursor-pointer group"
+            >
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-black text-slate-800">{profile?.name || user.name || "Employee"}</p>
+                <p className="text-sm font-black text-slate-800 group-hover:text-indigo-600 transition-colors">{profile?.name || user.name || "Employee"}</p>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{user.role || "Staff"}</p>
               </div>
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center text-indigo-600 shadow-inner overflow-hidden border border-white">
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center text-indigo-600 shadow-inner overflow-hidden border border-white group-hover:ring-2 group-hover:ring-indigo-100 transition-all">
                 {profile?.profile_photo ? (
-                  <img src={`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}${profile.profile_photo}`} alt="P" className="w-full h-full object-cover" />
+                  <img src={`${API_URL}${profile.profile_photo}`} alt="P" className="w-full h-full object-cover" />
                 ) : (
                   <User size={20} />
                 )}

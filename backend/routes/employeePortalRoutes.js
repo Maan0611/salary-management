@@ -5,9 +5,17 @@ const { verifyToken } = require("../middleware/authMiddleware");
 const multer = require("multer");
 const path = require("path");
 
+const fs = require("fs");
+ 
+// Ensure upload directory exists
+const uploadDir = "uploads/profiles/";
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+ 
 // Configure Multer for Profile Photos
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/profiles/"),
+  destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => cb(null, `profile-${Date.now()}${path.extname(file.originalname)}`)
 });
 const upload = multer({ storage });
