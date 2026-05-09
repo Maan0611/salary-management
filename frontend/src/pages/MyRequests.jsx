@@ -14,8 +14,7 @@ export default function MyRequests() {
     request_type: "Leave Request",
     reason: "",
     from_date: "",
-    to_date: "",
-    amount: ""
+    to_date: ""
   });
 
   const fetchRequests = async () => {
@@ -44,7 +43,7 @@ export default function MyRequests() {
         headers: { Authorization: `Bearer ${token}` }
       });
       setShowModal(false);
-      setFormData({ request_type: "Leave Request", reason: "", from_date: "", to_date: "", amount: "" });
+      setFormData({ request_type: "Leave Request", reason: "", from_date: "", to_date: "" });
       fetchRequests();
     } catch (err) {
       alert("Submission failed");
@@ -160,26 +159,10 @@ export default function MyRequests() {
                     <option value="Sick Leave">Sick Leave</option>
                     <option value="Emergency Leave">Emergency Leave</option>
                     <option value="Half Day">Half Day</option>
-                    <option value="Work From Home">Work From Home</option>
-                    <option value="Salary Advance">Salary Advance</option>
-                    <option value="Profile Update">Profile Update</option>
-                    
                   </select>
                 </div>
 
-                {formData.request_type === 'Salary Advance' && (
-                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Requested Amount (₹)</label>
-                    <input 
-                      type="number" 
-                      required
-                      placeholder="Enter amount..."
-                      className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 font-bold text-sm outline-none focus:ring-4 focus:ring-indigo-50 transition"
-                      value={formData.amount}
-                      onChange={(e) => setFormData({...formData, amount: e.target.value})}
-                    />
-                  </div>
-                )}
+
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
