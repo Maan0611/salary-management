@@ -162,12 +162,12 @@ export default function EmployeeSalary() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-indigo-600 p-6 rounded-2xl text-white shadow-xl shadow-indigo-100 relative overflow-hidden">
           <h4 className="text-indigo-100 font-bold text-[10px] uppercase tracking-widest mb-1">Total Earnings (YTD)</h4>
-          <h2 className="text-3xl font-black">₹{salaries.reduce((acc, curr) => acc + (curr.net_salary || 0), 0).toLocaleString()}</h2>
+          <h2 className="text-3xl font-black">₹{salaries.reduce((acc, curr) => acc + Number(curr.net_salary || 0), 0).toLocaleString()}</h2>
           <div className="absolute right-4 bottom-4 opacity-20"><TrendingUp size={48} /></div>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
           <h4 className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-1">Last Month Payout</h4>
-          <h2 className="text-3xl font-black text-slate-800">₹{(salaries[0]?.net_salary || 0).toLocaleString()}</h2>
+          <h2 className="text-3xl font-black text-slate-800">₹{Number(salaries[0]?.net_salary || 0).toLocaleString()}</h2>
           <div className="absolute right-4 bottom-4 opacity-10 text-emerald-600"><IndianRupee size={48} /></div>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
@@ -205,13 +205,13 @@ export default function EmployeeSalary() {
                   </div>
                 </td>
                 <td className="px-8 py-5 text-sm font-bold text-slate-600">
-                  {salary.status === 'Approved' || salary.status === 'Paid' ? `₹${salary.basic_salary}` : '***'}
+                  {salary.status === 'Approved' || salary.status === 'Paid' ? `₹${Number(salary.basic_salary).toLocaleString()}` : '***'}
                 </td>
                 <td className="px-8 py-5 text-sm font-bold text-emerald-500">
-                  {salary.status === 'Approved' || salary.status === 'Paid' ? `+₹${(salary.bonus || 0) + (salary.overtime || 0)}` : '***'}
+                  {salary.status === 'Approved' || salary.status === 'Paid' ? `+₹${Number((salary.bonus || 0) + (salary.overtime || 0)).toLocaleString()}` : '***'}
                 </td>
                 <td className="px-8 py-5 text-sm font-black text-slate-800">
-                  {salary.status === 'Approved' || salary.status === 'Paid' ? `₹${salary.net_salary}` : '***'}
+                  {salary.status === 'Approved' || salary.status === 'Paid' ? `₹${Number(salary.net_salary).toLocaleString()}` : '***'}
                 </td>
                 <td className="px-8 py-5">
                   <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${

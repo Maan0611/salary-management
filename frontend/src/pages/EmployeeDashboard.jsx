@@ -208,7 +208,7 @@ export default function EmployeeDashboard() {
 
           <div className="flex justify-between items-end relative z-10">
             <div className="text-5xl font-black text-slate-900 tracking-tighter">
-              ₹<CountUp end={stats.totalEarnings || stats.currentNetSalary} duration={2} separator="," />
+              ₹<CountUp end={Number(stats.totalEarnings || stats.currentNetSalary || 0)} duration={2} separator="," />
             </div>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
               Latest Payout: {stats.salaryStatus === 'Paid' ? 'Processed' : 'Pending'}
