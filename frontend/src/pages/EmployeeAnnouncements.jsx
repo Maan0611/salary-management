@@ -1,3 +1,4 @@
+import API_URL from "../apiConfig";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { 
@@ -16,7 +17,7 @@ export default function EmployeeAnnouncements() {
   const fetchAnnouncements = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/announcements/employee/all`, {
+      const res = await axios.get(`${API_URL}/api/announcements/employee/all`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAnnouncements(res.data);
@@ -39,7 +40,7 @@ export default function EmployeeAnnouncements() {
   const markAsRead = async (id) => {
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/announcements/employee/${id}/read`, {}, {
+      await axios.put(`${API_URL}/api/announcements/employee/${id}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAnnouncements(prev => prev.map(a => a.id === id ? { ...a, is_read: 1 } : a));
@@ -190,7 +191,7 @@ export default function EmployeeAnnouncements() {
                       </div>
                     </div>
                     <a 
-                      href={`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}${selectedAnn.attachment}`}
+                      href={`${API_URL}${selectedAnn.attachment}`}
                       target="_blank"
                       rel="noreferrer"
                       className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition flex items-center gap-2"

@@ -1,3 +1,4 @@
+import API_URL from "../apiConfig";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -38,9 +39,7 @@ export default function EmployeeDashboard() {
     const fetchStats = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const BASE = window.location.hostname === 'localhost'
-          ? 'http://localhost:5000'
-          : 'https://salary-management-64wa.onrender.com';
+        const BASE = API_URL;
         const headers = { Authorization: `Bearer ${token}` };
 
         const [dashRes, salaryRes, attRes] = await Promise.all([
@@ -99,7 +98,7 @@ export default function EmployeeDashboard() {
       const localDate = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
       const localTime = new Date().toLocaleTimeString('en-GB', { hour12: false }); // HH:MM:SS
 
-      await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/attendance/check-in`, 
+      await axios.post(`${API_URL}/api/attendance/check-in`, 
         { date: localDate, check_in: localTime }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -115,7 +114,7 @@ export default function EmployeeDashboard() {
       const localDate = new Date().toLocaleDateString('en-CA');
       const localTime = new Date().toLocaleTimeString('en-GB', { hour12: false });
 
-      await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/attendance/check-out`, 
+      await axios.post(`${API_URL}/api/attendance/check-out`, 
         { date: localDate, check_out: localTime }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );

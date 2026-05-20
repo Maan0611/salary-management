@@ -1,4 +1,5 @@
 // src/pages/AdminDashboard.jsx
+import API_URL from "../apiConfig";
 import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
@@ -35,7 +36,7 @@ export default function AdminDashboard() {
     const fetchStats = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/admin/dashboard`, {
+        const res = await axios.get(`${API_URL}/api/admin/dashboard`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setStats(res.data);

@@ -1,3 +1,4 @@
+import API_URL from "../apiConfig";
 import React, { useState } from "react";
 import axios from "axios";
 import { 
@@ -21,7 +22,7 @@ export default function EmployeeSettings() {
     setLoading(true);
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/change-password`, {
+      await axios.put(`${API_URL}/api/employee-portal/change-password`, {
         oldPassword: passData.oldPassword,
         newPassword: passData.newPassword
       }, {

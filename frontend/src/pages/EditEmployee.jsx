@@ -1,3 +1,4 @@
+import API_URL from "../apiConfig";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
@@ -33,7 +34,7 @@ export default function EditEmployee() {
     const fetchEmployee = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employees/${id}`, {
+        const res = await axios.get(`${API_URL}/api/employees/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = res.data;
@@ -62,7 +63,7 @@ export default function EditEmployee() {
     setIsSubmitting(true);
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employees/${id}`, formData, {
+      await axios.put(`${API_URL}/api/employees/${id}`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSuccess("Employee record successfully synchronized!");

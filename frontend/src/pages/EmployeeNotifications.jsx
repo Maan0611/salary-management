@@ -1,3 +1,4 @@
+import API_URL from "../apiConfig";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Bell, CheckCircle2, AlertCircle, Info, XCircle, Clock } from "lucide-react";
@@ -10,7 +11,7 @@ export default function EmployeeNotifications() {
   const fetchNotifications = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/notifications`, {
+      const res = await axios.get(`${API_URL}/api/employee-portal/notifications`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setNotifications(res.data);
@@ -28,7 +29,7 @@ export default function EmployeeNotifications() {
   const markAsRead = async (id) => {
     try {
       const token = sessionStorage.getItem("token");
-      await axios.put(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/notifications/${id}/read`, {}, {
+      await axios.put(`${API_URL}/api/employee-portal/notifications/${id}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchNotifications();

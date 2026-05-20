@@ -1,3 +1,4 @@
+import API_URL from "../apiConfig";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
@@ -29,7 +30,7 @@ export default function RequestManagement() {
         setLoading(false);
         return;
       }
-      const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/requests/admin/all`, {
+      const res = await axios.get(`${API_URL}/api/requests/admin/all`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(res.data);
@@ -58,7 +59,7 @@ export default function RequestManagement() {
   const handleAction = async (id, action) => {
     try {
       const token = sessionStorage.getItem("token");
-      const url = `${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/requests/admin/${id}/${action}`;
+      const url = `${API_URL}/api/requests/admin/${id}/${action}`;
       await axios.put(url, { admin_remark: adminRemark }, {
         headers: { Authorization: `Bearer ${token}` }
       });

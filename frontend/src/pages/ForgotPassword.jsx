@@ -1,3 +1,4 @@
+import API_URL from "../apiConfig";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { 
@@ -22,9 +23,7 @@ export default function ForgotPassword() {
   const [timer, setTimer] = useState(300); // 5 minutes code expiry
   const [resendCooldown, setResendCooldown] = useState(0);
 
-  const API_URL = window.location.hostname === "localhost" 
-    ? "http://localhost:5000/api" 
-    : "https://salary-management-64wa.onrender.com/api";
+
 
   // 5-minute expiry timer
   useEffect(() => {
@@ -66,7 +65,7 @@ export default function ForgotPassword() {
     setMessage("");
     
     try {
-      const res = await axios.post(`${API_URL}/auth/send-otp`, { email });
+      const res = await axios.post(`${API_URL}/api/auth/send-otp`, { email });
       setMessage(res.data.message || "A secure verification code has been dispatched.");
       setTimer(300); // reset 5-minute timer
       setResendCooldown(60); // start 60s cooldown
@@ -106,7 +105,7 @@ export default function ForgotPassword() {
     setLoading(true);
     
     try {
-      const res = await axios.post(`${API_URL}/auth/send-otp`, { email });
+      const res = await axios.post(`${API_URL}/api/auth/send-otp`, { email });
       setMessage(res.data.message || "A new code has been successfully dispatched!");
       setTimer(300); // reset 5-minute timer
       setResendCooldown(60); // restart 60s cooldown
@@ -133,7 +132,7 @@ export default function ForgotPassword() {
     setMessage("");
     
     try {
-      const res = await axios.post(`${API_URL}/auth/verify-otp`, {
+      const res = await axios.post(`${API_URL}/api/auth/verify-otp`, {
         email,
         otp,
         newPassword

@@ -1,3 +1,4 @@
+import API_URL from "../apiConfig";
 import React, { useState } from "react";
 import axios from "axios";
 import { 
@@ -19,11 +20,7 @@ export default function Login() {
     setLoading(true);
     setError("");
     try {
-      const API_URL = window.location.hostname === "localhost" 
-        ? "http://localhost:5000/api" 
-        : `${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api`;
-        
-      const res = await axios.post(`${API_URL}/auth/login`, { email, password });
+      const res = await axios.post(`${API_URL}/api/auth/login`, { email, password });
       sessionStorage.setItem("token", res.data.token);
       sessionStorage.setItem("user", JSON.stringify(res.data.user));
       

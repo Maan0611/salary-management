@@ -1,3 +1,4 @@
+import API_URL from "../apiConfig";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { 
@@ -15,7 +16,7 @@ export default function EmployeeAttendance() {
     const fetchAttendance = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employee-portal/attendance`, {
+        const res = await axios.get(`${API_URL}/api/employee-portal/attendance`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setAttendance(res.data);

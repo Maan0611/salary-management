@@ -1,3 +1,4 @@
+import API_URL from "../apiConfig";
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -46,7 +47,7 @@ export default function AddEmployee() {
 
     try {
       const token = sessionStorage.getItem("token");
-      await axios.post(`${window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://salary-management-64wa.onrender.com'}/api/employees`, formData, {
+      await axios.post(`${API_URL}/api/employees`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSuccess("Employee successfully integrated into the workforce!");
