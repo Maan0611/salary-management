@@ -1,4 +1,5 @@
 const db = require('../db');
+const { sendAnnouncementEmail } = require('../utils/mailer');
 
 // ADMIN APIs
 exports.createAnnouncement = (req, res) => {
@@ -10,8 +11,21 @@ exports.createAnnouncement = (req, res) => {
         VALUES (?, ?, ?, ?, ?, ?, ?, 'Published', ?)
     `;
     
-    db.query(sql, [title, message, priority, target_type, target_id, publish_date || null, expiry_date || null, attachment], (err, result) => {
+    db.query(sql, [title, message, priority, target_type, target_id, publish_date || null, expiry_date || null, attachment], async (err, result) => {
         if (err) return res.status(500).json({ message: "Failed to create announcement", error: err.message });
+        
+        // Query active employee emails and send announcement notifications in the background
+        try {
+            const [employees] = await db.promise().query("SELECT email FROM employees WHERE status = 'Active'");
+            employees.forEach(emp => {
+                sendAnnouncementEmail(emp.email, title, message, priority, attachment).catch(mailErr => {
+                    console.error(`Announcement dispatch failed for ${emp.email}:`, mailErr.message);
+                });
+            });
+        } catch (mailQErr) {
+            console.error("Failed to query employee mailing list for announcements:", mailQErr.message);
+        }
+
         res.status(201).json({ message: "Announcement published successfully", id: result.insertId });
     });
 };

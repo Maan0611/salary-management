@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
 import {
-  Search, FileText,
+  Search, FileText, Mail,
   CreditCard, Clock, CheckCircle, AlertCircle, Edit,
   Trash2, Calendar, MoreVertical,
   Plus, RefreshCw, FileSpreadsheet, ChevronDown,
@@ -204,7 +204,9 @@ export default function Salary() {
     XLSX.writeFile(wb, `Payroll_${selectedMonth}_${selectedYear}.xlsx`);
   };
 
-  const generatePayslip = (salary) => {
+  const [emailSending, setEmailSending] = useState({});
+
+  const buildPayslip = (salary) => {
     const doc = new jsPDF();
 
     // --- Header Section ---
@@ -322,7 +324,51 @@ export default function Salary() {
     doc.setFont("helvetica", "italic");
     doc.text("This is a computer-generated payslip and does not require a physical stamp.", 105, 280, { align: 'center' });
 
-    doc.save(`Payslip_${salary.name}_${monthLabel}_${selectedYear}.pdf`);
+    return doc;
+  };
+
+  const generatePayslip = (salary) => {
+    const doc = buildPayslip(salary);
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const monthLabel = monthNames[parseInt(salary.month) - 1] || salary.month;
+    doc.save(`Payslip_${salary.name}_${monthLabel}_${salary.year}.pdf`);
+  };
+
+  const sendPayslipEmail = async (salary) => {
+    setEmailSending(prev => ({ ...prev, [salary.id]: true }));
+    try {
+      const doc = buildPayslip(salary);
+      const pdfBlob = doc.output('blob');
+
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const monthLabel = monthNames[parseInt(salary.month) - 1] || salary.month;
+      const fileName = `Payslip_${salary.name}_${monthLabel}_${salary.year}.pdf`;
+
+      const formData = new FormData();
+      formData.append("salary_id", salary.id);
+      formData.append("pdf", pdfBlob, fileName);
+
+      const token = sessionStorage.getItem("token");
+      const API_URL = window.location.hostname === 'localhost' 
+        ? 'http://localhost:5000/api' 
+        : 'https://salary-management-64wa.onrender.com/api';
+
+      await axios.post(`${API_URL}/email/send-salary`, formData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        }
+      });
+
+      setMessage({ type: "success", text: `Payslip email successfully dispatched to ${salary.name}!` });
+      setTimeout(() => setMessage(null), 4000);
+    } catch (err) {
+      console.error("Failed to email payslip:", err);
+      setMessage({ type: "error", text: err.response?.data?.message || "Failed to dispatch email." });
+      setTimeout(() => setMessage(null), 4000);
+    } finally {
+      setEmailSending(prev => ({ ...prev, [salary.id]: false }));
+    }
   };
 
   if (loading && salaryRecords.length === 0) {
@@ -660,7 +706,20 @@ export default function Salary() {
                             <FileText size={18} />
                           </button>
                         )}
-                        {/* Email functionality removed */}
+                        {s.status === 'Paid' && (
+                          <button
+                            onClick={() => sendPayslipEmail(s)}
+                            disabled={emailSending[s.id]}
+                            className="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:text-indigo-600 hover:bg-white hover:shadow-md rounded-xl transition-all disabled:opacity-50"
+                            title="Send Payslip Email"
+                          >
+                            {emailSending[s.id] ? (
+                              <RefreshCw size={18} className="animate-spin text-indigo-600" />
+                            ) : (
+                              <Mail size={18} />
+                            )}
+                          </button>
+                        )}
                         <button
                           onClick={() => { setEditRecord(s); setShowEditModal(true); }}
                           className="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:text-amber-600 hover:bg-white hover:shadow-md rounded-xl transition-all"

@@ -1,4 +1,5 @@
 const db = require('../db');
+const { sendLeaveStatusEmail } = require('../utils/mailer');
 
 // EMPLOYEE PORTAL APIs
 exports.createRequest = (req, res) => {
@@ -54,13 +55,18 @@ exports.approveRequest = async (req, res) => {
     const { admin_remark } = req.body;
 
     try {
-        // 1. Get request details to calculate leave days
-        const [request] = await db.promise().query("SELECT * FROM requests WHERE id = ?", [id]);
+        // 1. Get request and employee details
+        const [request] = await db.promise().query(`
+            SELECT r.*, e.name as employee_name, e.email as employee_email 
+            FROM requests r 
+            JOIN employees e ON r.employee_id = e.id 
+            WHERE r.id = ?
+        `, [id]);
         if (request.length === 0) {
             return res.status(404).json({ message: "Request not found" });
         }
 
-        const { employee_id, request_type, from_date, to_date } = request[0];
+        const { employee_id, employee_name, employee_email, request_type, from_date, to_date } = request[0];
 
         // 2. Update request status
         await db.promise().query(
@@ -115,6 +121,11 @@ exports.approveRequest = async (req, res) => {
             }
         }
 
+        // C. Dispatch leave status email in background
+        sendLeaveStatusEmail(employee_email, employee_name, request_type, 'Approved', from_date, to_date, admin_remark).catch(mailErr => {
+            console.error("Leave approval email async delivery failure:", mailErr.message);
+        });
+
         res.json({ message: "Request approved, balance updated, and attendance synced" });
     } catch (err) {
         console.error("Error in approveRequest:", err);
@@ -122,15 +133,41 @@ exports.approveRequest = async (req, res) => {
     }
 };
 
-exports.rejectRequest = (req, res) => {
+exports.rejectRequest = async (req, res) => {
     const { id } = req.params;
     const { admin_remark } = req.body;
-    const sql = "UPDATE requests SET status = 'Rejected', admin_remark = ? WHERE id = ?";
-    db.query(sql, [admin_remark, id], (err) => {
-        if (err) return res.status(500).json({ message: "Update failed" });
+    
+    try {
+        // 1. Get request details and employee details
+        const [request] = await db.promise().query(`
+            SELECT r.*, e.name as employee_name, e.email as employee_email 
+            FROM requests r 
+            JOIN employees e ON r.employee_id = e.id 
+            WHERE r.id = ?
+        `, [id]);
         
-        res.json({ message: "Request rejected" });
-    });
+        if (request.length === 0) {
+            return res.status(404).json({ message: "Request not found" });
+        }
+        
+        const { employee_email, employee_name, request_type, from_date, to_date } = request[0];
+        
+        // 2. Update status
+        await db.promise().query(
+            "UPDATE requests SET status = 'Rejected', admin_remark = ? WHERE id = ?",
+            [admin_remark, id]
+        );
+        
+        // 3. Dispatch rejection email in background
+        sendLeaveStatusEmail(employee_email, employee_name, request_type, 'Rejected', from_date, to_date, admin_remark).catch(mailErr => {
+            console.error("Rejection email async dispatch failure:", mailErr.message);
+        });
+        
+        res.json({ message: "Request rejected and email dispatched." });
+    } catch (err) {
+        console.error("Error in rejectRequest:", err);
+        res.status(500).json({ message: "Failed to reject request", detail: err.message });
+    }
 };
 
 // Stats for Admin Dashboard

@@ -22,6 +22,7 @@ const salaryRoutes = require("./routes/salaryRoutes");
 const employeePortalRoutes = require("./routes/employeePortalRoutes");
 const requestRoutes = require("./routes/requestRoutes");
 const announcementRoutes = require("./routes/announcementRoutes");
+const emailRoutes = require("./routes/emailRoutes");
 
 
 const fs = require('fs');
@@ -49,6 +50,7 @@ app.use("/api/salary", salaryRoutes);
 app.use("/api/employee-portal", employeePortalRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/announcements", announcementRoutes);
+app.use("/api/email", emailRoutes);
 
 const db = require("./db");
 const bcrypt = require("bcryptjs");
@@ -168,6 +170,14 @@ const initDB = async () => {
         message TEXT,
         type ENUM('info', 'success', 'warning', 'danger') DEFAULT 'info',
         is_read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
+      // OTPs Table
+      `CREATE TABLE IF NOT EXISTS otps (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(100) NOT NULL,
+        otp VARCHAR(6) NOT NULL,
+        expires_at TIMESTAMP NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`
     ];
